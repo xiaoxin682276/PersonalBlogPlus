@@ -1,13 +1,11 @@
 ---
-title: 你好世界！
-description: Welcome to Hugo Theme Stack
+title: 你好 世界！
+description: 我的第一篇博客
 slug: hello-world
 date: 2025-09-13 00:00:00+0000
 image: cover.jpg
 categories:
-    - Example Category
-tags:
-    - Example Tag
+    - 杂谈
 weight: 1       # You can add weight to some posts to override the default sorting (date descending)
 ---
 
