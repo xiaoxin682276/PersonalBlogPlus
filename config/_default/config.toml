@@ -1,3 +1,4 @@
+
 # Change baseurl before deploy
 baseurl = "https://personalblog.xiaoxin520.com"
 languageCode = "en-us"
