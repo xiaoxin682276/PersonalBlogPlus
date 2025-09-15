@@ -17,3 +17,7 @@ disqusShortname = "hugo-theme-stack"
 
 [pagination]
 pagerSize = 5
+
+# 静态文件处理
+[static]
+# 确保静态文件被正确处理

@@ -2,6 +2,11 @@
     You can add your own custom styles here.
 */
 
+/* 测试样式 - 确认CSS是否生效 */
+body {
+    border: 5px solid red !important;
+}
+
 /* 透明背景样式 */
 :root {
     /* 主背景色 - 带透明度 */
@@ -19,13 +24,16 @@
 
 /* 整体页面背景 */
 body {
+    /* 测试背景色 - 先确认CSS是否生效 */
+    background-color: #f0f8ff !important;
+    
     /* 背景图片 + 渐变叠加 */
     background-image: 
         linear-gradient(135deg, 
             rgba(135, 206, 235, 0.1) 0%, 
             rgba(255, 182, 193, 0.1) 50%, 
             rgba(221, 160, 221, 0.1) 100%),
-        url('../../static/images/background.jpg'); /* 替换为您的背景图片路径 */
+        url('images/background.jpg'); /* 使用相对路径 */
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -41,7 +49,7 @@ body {
             rgba(20, 20, 40, 0.8) 0%, 
             rgba(40, 20, 40, 0.8) 50%, 
             rgba(20, 40, 40, 0.8) 100%),
-        url('../../static/images/background-dark.jpg'); /* 深色模式背景图片 */
+        url('images/background-dark.jpg'); /* 深色模式背景图片 */
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
