@@ -14,6 +14,7 @@ menu:
 comments: false
 ---
 
+<!--
 To use this feature, add `links` section to frontmatter.
 
 This page's frontmatter:
@@ -31,3 +32,4 @@ links:
 ```
 
 `image` field accepts both local and external images.
+-->
