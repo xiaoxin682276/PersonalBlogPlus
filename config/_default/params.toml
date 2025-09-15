@@ -114,7 +114,7 @@ requiredMeta = ["name", "email", "url"]
 placeholder = ""
 
 [comments.waline.locale]
-admin = "Admin"
+admin = "管理员"
 
 [comments.twikoo]
 envId = ""
