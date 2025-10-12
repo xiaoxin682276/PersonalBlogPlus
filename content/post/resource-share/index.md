@@ -2,7 +2,6 @@
 title: "优质资源推荐合集(持续更新)"
 description: "整理了一些实用的在线工具、学习网站、游戏与影视资源，涵盖各类直连与需魔法访问的网站。"
 date: 2025-10-12T00:00:00+08:00
-image: cover.jpg
 categories:
   - 资源合集
 tags:
