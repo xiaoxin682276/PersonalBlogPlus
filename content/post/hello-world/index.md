@@ -5,8 +5,7 @@ slug: hello-world
 date: 2025-09-13 00:00:00+0000
 image: cover.jpg
 categories:
-    - 杂谈
-weight: 1       # You can add weight to some posts to override the default sorting (date descending)
+    - 杂谈     # You can add weight to some posts to override the default sorting (date descending)
 ---
 
 ### 初来乍到，我的第一篇博客，做个纪念

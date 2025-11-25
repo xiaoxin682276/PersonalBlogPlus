@@ -7,7 +7,6 @@ image: redis-qa-cover.jpg
 categories:
     - 面试
     - 后端
-weight: 2
 ---
 
 ### Redis 高频面试问答总结
