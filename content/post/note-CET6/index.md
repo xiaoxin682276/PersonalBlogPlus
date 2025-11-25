@@ -5,6 +5,7 @@ slug: english-vocab-summary
 date: 2025-11-20 22:00:00+0000
 categories:
     - 英语
+    - 六级
 weight: 1
 ---
 
