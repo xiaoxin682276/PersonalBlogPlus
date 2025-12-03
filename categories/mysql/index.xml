@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>MySQL on 昕染的个人博客</title><link>https://personalblog.xiaoxin520.com/categories/mysql/</link><description>Recent content in MySQL on 昕染的个人博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 03 Dec 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://personalblog.xiaoxin520.com/categories/mysql/index.xml" rel="self" type="application/rss+xml"/><item><title>MySQL 面试常见增删改查与高频知识点总结</title><link>https://personalblog.xiaoxin520.com/p/mysql-crud-interview/</link><pubDate>Wed, 03 Dec 2025 00:00:00 +0000</pubDate><guid>https://personalblog.xiaoxin520.com/p/mysql-crud-interview/</guid><description>&lt;h3 id="mysql-面试常见增删改查与知识点总结"&gt;MySQL 面试常见增删改查与知识点总结
+&lt;/h3&gt;&lt;p&gt;在面试中，MySQL 是后端岗位最常考的基础能力之一。本文不仅总结了常用 CRUD 语句，还包含常见索引、事务、锁机制等核心知识点，适用于面试快速复习。&lt;/p&gt;
+&lt;h2 id="-1-创建表create-table"&gt;🟢 1. 创建表（CREATE TABLE）
+&lt;/h2&gt;&lt;p&gt;CREATE TABLE users (
+id INT PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(50) NOT NULL,
+age INT CHECK (age &amp;gt;= 0),
+email VARCHAR(100) UNIQUE,
+status TINYINT DEFAULT 1,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);&lt;/p&gt;
+&lt;h2 id="-2-插入数据insert"&gt;🟡 2. 插入数据（INSERT）
+&lt;/h2&gt;&lt;p&gt;INSERT INTO users (name, age, email)
+VALUES (&amp;lsquo;Alice&amp;rsquo;, 25, &amp;lsquo;&lt;a class="link" href="mailto:alice@example.com" &gt;alice@example.com&lt;/a&gt;&amp;rsquo;);&lt;/p&gt;
+&lt;p&gt;INSERT INTO users (name, age, email)
+VALUES
+(&amp;lsquo;Bob&amp;rsquo;, 30, &amp;lsquo;&lt;a class="link" href="mailto:bob@example.com" &gt;bob@example.com&lt;/a&gt;&amp;rsquo;),
+(&amp;lsquo;Charlie&amp;rsquo;, 28, &amp;lsquo;&lt;a class="link" href="mailto:charlie@example.com" &gt;charlie@example.com&lt;/a&gt;&amp;rsquo;);&lt;/p&gt;
+&lt;p&gt;INSERT IGNORE INTO users (email) VALUES (&amp;lsquo;&lt;a class="link" href="mailto:alice@example.com" &gt;alice@example.com&lt;/a&gt;&amp;rsquo;);&lt;/p&gt;
+&lt;p&gt;REPLACE INTO users(id, name, email)
+VALUES (1, &amp;lsquo;Tom&amp;rsquo;, &amp;rsquo;&lt;a class="link" href="mailto:tom@example.com" &gt;tom@example.com&lt;/a&gt;&amp;rsquo;);&lt;/p&gt;
+&lt;h2 id="-3-查询数据select"&gt;🔵 3. 查询数据（SELECT）
+&lt;/h2&gt;&lt;p&gt;SELECT * FROM users WHERE age &amp;gt; 20;&lt;/p&gt;
+&lt;p&gt;SELECT status, COUNT(*) AS total
+FROM users
+GROUP BY status
+HAVING total &amp;gt; 1;&lt;/p&gt;
+&lt;p&gt;SELECT * FROM users ORDER BY created_at DESC;&lt;/p&gt;
+&lt;p&gt;SELECT * FROM users LIMIT 20 OFFSET 0;&lt;/p&gt;
+&lt;p&gt;SELECT * FROM users
+WHERE age &amp;gt; (SELECT AVG(age) FROM users);&lt;/p&gt;
+&lt;h2 id="-4-更新数据update"&gt;🟠 4. 更新数据（UPDATE）
+&lt;/h2&gt;&lt;p&gt;UPDATE users
+SET age = age + 1
+WHERE id = 1;&lt;/p&gt;
+&lt;p&gt;UPDATE users
+SET age = 26, status = 0
+WHERE email = &amp;lsquo;&lt;a class="link" href="mailto:alice@example.com" &gt;alice@example.com&lt;/a&gt;&amp;rsquo;;&lt;/p&gt;
+&lt;h2 id="-5-删除数据delete"&gt;🔴 5. 删除数据（DELETE）
+&lt;/h2&gt;&lt;p&gt;DELETE FROM users WHERE id = 3;&lt;/p&gt;
+&lt;p&gt;DELETE FROM users;&lt;/p&gt;
+&lt;p&gt;TRUNCATE TABLE users;&lt;/p&gt;
+&lt;h2 id="-6-外键foreign-key"&gt;🧩 6. 外键（FOREIGN KEY）
+&lt;/h2&gt;&lt;p&gt;CREATE TABLE orders (
+id INT PRIMARY KEY AUTO_INCREMENT,
+user_id INT,
+amount DECIMAL(10,2),
+FOREIGN KEY(user_id) REFERENCES users(id)
+ON DELETE CASCADE
+ON UPDATE CASCADE
+);&lt;/p&gt;
+&lt;h2 id="-7-索引index"&gt;🧱 7. 索引（INDEX）
+&lt;/h2&gt;&lt;p&gt;CREATE INDEX idx_age ON users(age);&lt;/p&gt;
+&lt;p&gt;CREATE INDEX idx_name_email ON users(name, email);&lt;/p&gt;
+&lt;p&gt;&amp;ndash; 索引重点：
+&amp;ndash; 1. 最左前缀原则
+&amp;ndash; 2. 覆盖索引
+&amp;ndash; 3. 前缀模糊查询索引失效（LIKE &amp;lsquo;%abc&amp;rsquo;）
+&amp;ndash; 4. 对索引字段使用函数会导致索引失效&lt;/p&gt;
+&lt;h2 id="-8-事务transaction"&gt;🔐 8. 事务（Transaction）
+&lt;/h2&gt;&lt;p&gt;START TRANSACTION;&lt;/p&gt;
+&lt;p&gt;UPDATE users SET age = age + 1 WHERE id = 1;
+UPDATE accounts SET money = money - 100 WHERE user_id = 1;&lt;/p&gt;
+&lt;p&gt;COMMIT;&lt;/p&gt;
+&lt;p&gt;&amp;ndash; 回滚示例
+ROLLBACK;&lt;/p&gt;
+&lt;p&gt;&amp;ndash; ACID
+&amp;ndash; A：原子性
+&amp;ndash; C：一致性
+&amp;ndash; I：隔离性
+&amp;ndash; D：持久性&lt;/p&gt;
+&lt;h2 id="-9-锁机制innodb"&gt;🔒 9. 锁机制（InnoDB）
+&lt;/h2&gt;&lt;p&gt;&amp;ndash; 行锁（排他锁）
+SELECT * FROM users WHERE id = 1 FOR UPDATE;&lt;/p&gt;
+&lt;p&gt;&amp;ndash; 共享锁（读锁）
+SELECT * FROM users WHERE id = 1 LOCK IN SHARE MODE;&lt;/p&gt;
+&lt;p&gt;&amp;ndash; 间隙锁（Next-Key Lock）通常出现在范围查询中
+SELECT * FROM users WHERE age &amp;gt; 20 FOR UPDATE;&lt;/p&gt;
+&lt;h2 id="-10-视图view"&gt;📄 10. 视图（VIEW）
+&lt;/h2&gt;&lt;p&gt;CREATE VIEW active_users AS
+SELECT id, name FROM users WHERE status = 1;&lt;/p&gt;
+&lt;p&gt;UPDATE active_users SET name = &amp;lsquo;NewName&amp;rsquo; WHERE id = 1;&lt;/p&gt;
+&lt;h2 id="-11-存储过程stored-procedure"&gt;⚙️ 11. 存储过程（Stored Procedure）
+&lt;/h2&gt;&lt;p&gt;DELIMITER &lt;/p&gt;
+$$
+CREATE PROCEDURE GetUserCount()
+BEGIN
+SELECT COUNT(*) FROM users;
+END$$&lt;p&gt;
+DELIMITER ;&lt;/p&gt;
+&lt;p&gt;CALL GetUserCount();&lt;/p&gt;</description></item><item><title>MySQL 面试问答总结</title><link>https://personalblog.xiaoxin520.com/p/mysql-interview-qa/</link><pubDate>Tue, 25 Nov 2025 00:00:00 +0000</pubDate><guid>https://personalblog.xiaoxin520.com/p/mysql-interview-qa/</guid><description>&lt;img src="https://personalblog.xiaoxin520.com/p/mysql-interview-qa/mysql-qa-cover.jpg" alt="Featured image of post MySQL 面试问答总结" /&gt;&lt;h3 id="mysql-面试问答总结"&gt;MySQL 面试问答总结
+&lt;/h3&gt;&lt;p&gt;本文整理了 MySQL 性能优化、索引使用、事务管理及分库分表等面试常见问题，以问答形式呈现，便于复习和理解。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="1-mysql中如何定位慢查询"&gt;1. MySQL中，如何定位慢查询？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+在压力测试时发现接口响应时间慢，可以通过运维监控系统（如 Skywalking）查看具体接口耗时和 SQL 执行时间。如果没有监控系统，MySQL 提供慢查询日志功能，可以在配置文件开启，并设置阈值（例如 2 秒），超过阈值的 SQL 会记录在日志中，从日志中找到慢 SQL。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="2-sql语句执行很慢如何分析"&gt;2. SQL语句执行很慢，如何分析？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+使用 &lt;code&gt;EXPLAIN&lt;/code&gt; 命令分析 SQL 执行计划：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;key&lt;/code&gt; 和 &lt;code&gt;key_len&lt;/code&gt;：检查是否命中索引。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;type&lt;/code&gt;：查看访问类型，判断是否存在全表扫描。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Extra&lt;/code&gt;：判断是否回表，可根据提示优化索引或修改返回字段。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="3-了解索引吗什么是索引"&gt;3. 了解索引吗？什么是索引？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+索引是一种数据结构，用于加速数据检索、排序和分组，降低数据库 I/O 和 CPU 消耗。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="4-索引的底层数据结构了解吗"&gt;4. 索引的底层数据结构了解吗？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+InnoDB 默认使用 B+ 树：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;节点可以有更多子节点，路径更短。&lt;/li&gt;
+&lt;li&gt;非叶子节点只存储键值和指针，叶子节点存储数据。&lt;/li&gt;
+&lt;li&gt;叶子节点形成双向链表，适合范围查询。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="5-b树和b树的区别"&gt;5. B树和B+树的区别？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;B树非叶子和叶子节点都存储数据；B+树所有数据只在叶子节点。&lt;/li&gt;
+&lt;li&gt;B+树范围查询效率更高，叶子节点形成双向链表。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h4 id="6-聚簇索引和非聚簇索引"&gt;6. 聚簇索引和非聚簇索引？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;聚簇索引：数据与索引放一起，叶子节点保存整行数据，一般由主键构成。&lt;/li&gt;
+&lt;li&gt;非聚簇索引：数据与索引分开，叶子节点保存主键值，可有多个。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="7-什么是回表查询"&gt;7. 什么是回表查询？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+通过二级索引获取主键值，然后再访问聚簇索引中的整行数据。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="8-什么是覆盖索引"&gt;8. 什么是覆盖索引？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+查询所需字段全部在索引中，不需要回表，减少查询次数，提高效率。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="9-mysql-超大分页如何处理"&gt;9. MySQL 超大分页如何处理？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+使用 LIMIT 大分页效率低。可先查询 ID 列分页，再通过子查询过滤数据，利用覆盖索引提高效率。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="10-索引创建原则有哪些"&gt;10. 索引创建原则有哪些？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;数据量大 (&amp;gt;10 万) 时创建索引。&lt;/li&gt;
+&lt;li&gt;查询频繁的字段、排序字段、分组字段优先。&lt;/li&gt;
+&lt;li&gt;尽量使用复合索引覆盖查询字段。&lt;/li&gt;
+&lt;li&gt;低区分度字段放组合索引后面。&lt;/li&gt;
+&lt;li&gt;长字段可用前缀索引。&lt;/li&gt;
+&lt;li&gt;控制索引数量，平衡写入性能。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="11-索引什么时候会失效"&gt;11. 索引什么时候会失效？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;不遵循最左匹配原则。&lt;/li&gt;
+&lt;li&gt;模糊查询 &lt;code&gt;%xxx&lt;/code&gt; 前置。&lt;/li&gt;
+&lt;li&gt;索引字段上做运算或类型转换。&lt;/li&gt;
+&lt;li&gt;复合索引中间使用范围查询，右侧条件失效。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="12-sql-优化经验有哪些"&gt;12. SQL 优化经验有哪些？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;避免 SELECT *，明确字段。&lt;/li&gt;
+&lt;li&gt;聚合查询使用 UNION ALL 代替 UNION。&lt;/li&gt;
+&lt;li&gt;表关联优先 INNER JOIN，小表驱动。&lt;/li&gt;
+&lt;li&gt;主从复制和读写分离提升性能。&lt;/li&gt;
+&lt;li&gt;大数据量考虑分库分表。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="13-创建表时如何优化"&gt;13. 创建表时如何优化？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+选择字段类型与内容匹配：数值选 TINYINT/INT/BIGINT，字符串选 CHAR/VARCHAR/TEXT，避免冗长字段。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="14-使用索引时如何优化"&gt;14. 使用索引时如何优化？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+确保索引字段是查询频繁字段，复合索引覆盖查询字段，避免在索引字段上做运算或类型转换，控制索引数量。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="15-sql-语句优化实践"&gt;15. SQL 语句优化实践？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;指定字段，避免 SELECT *&lt;/li&gt;
+&lt;li&gt;聚合使用 UNION ALL&lt;/li&gt;
+&lt;li&gt;表关联优先 INNER JOIN，小表驱动&lt;/li&gt;
+&lt;li&gt;LEFT/RIGHT JOIN 时，小表做驱动表&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="16-事务特性是什么"&gt;16. 事务特性是什么？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+ACID：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;原子性（Atomicity）&lt;/li&gt;
+&lt;li&gt;一致性（Consistency）&lt;/li&gt;
+&lt;li&gt;隔离性（Isolation）&lt;/li&gt;
+&lt;li&gt;持久性（Durability）&lt;br&gt;
+示例：A 向 B 转账 500 元，要么全部成功，要么全部失败。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="17-并发事务可能带来哪些问题"&gt;17. 并发事务可能带来哪些问题？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;脏读：读到未提交的数据&lt;/li&gt;
+&lt;li&gt;不可重复读：事务内多次读数据不一致&lt;/li&gt;
+&lt;li&gt;幻读：读到其他事务插入的新行&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="18-如何解决并发问题默认隔离级别"&gt;18. 如何解决并发问题？默认隔离级别？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+使用事务隔离：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;READ UNCOMMITTED：未提交读&lt;/li&gt;
+&lt;li&gt;READ COMMITTED：解决脏读&lt;/li&gt;
+&lt;li&gt;REPEATABLE READ（MySQL 默认）：解决脏读和不可重复读&lt;/li&gt;
+&lt;li&gt;SERIALIZABLE：解决所有问题，但性能低&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="19-redo-log-和-undo-log-区别"&gt;19. redo log 和 undo log 区别？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;redo log：记录数据页物理变化，用于持久化恢复&lt;/li&gt;
+&lt;li&gt;undo log：记录逻辑日志，用于回滚事务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="20-事务隔离如何保证mvcc-原理"&gt;20. 事务隔离如何保证？MVCC 原理？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;MVCC 通过维护多版本数据避免读写冲突&lt;/li&gt;
+&lt;li&gt;隐藏字段（trx_id, roll_pointer）、undo log、read view 快照实现&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="21-mysql-主从同步原理"&gt;21. MySQL 主从同步原理？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;主库写 Binlog&lt;/li&gt;
+&lt;li&gt;从库读取 Binlog 写 Relay Log&lt;/li&gt;
+&lt;li&gt;从库重做日志事件更新数据&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h4 id="22-项目中使用过分库分表吗"&gt;22. 项目中使用过分库分表吗？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;垂直拆分：微服务对应数据库&lt;/li&gt;
+&lt;li&gt;水平拆分：单表数据量大，用 mycat 按 ID 取模分片&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="总结"&gt;总结
+&lt;/h3&gt;&lt;p&gt;通过慢查询日志、EXPLAIN 分析、索引优化、事务控制及分库分表策略，可以有效提升 MySQL 性能，避免大数据量下的性能瓶颈。&lt;/p&gt;</description></item></channel></rss>

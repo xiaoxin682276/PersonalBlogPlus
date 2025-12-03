@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>网络配置 on 昕染的个人博客</title><link>https://personalblog.xiaoxin520.com/tags/%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/</link><description>Recent content in 网络配置 on 昕染的个人博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 15 Sep 2025 00:00:00 +0800</lastBuildDate><atom:link href="https://personalblog.xiaoxin520.com/tags/%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/index.xml" rel="self" type="application/rss+xml"/><item><title>git国内使用魔法无法推送</title><link>https://personalblog.xiaoxin520.com/p/git%E5%9B%BD%E5%86%85%E4%BD%BF%E7%94%A8%E9%AD%94%E6%B3%95%E6%97%A0%E6%B3%95%E6%8E%A8%E9%80%81/</link><pubDate>Mon, 15 Sep 2025 00:00:00 +0800</pubDate><guid>https://personalblog.xiaoxin520.com/p/git%E5%9B%BD%E5%86%85%E4%BD%BF%E7%94%A8%E9%AD%94%E6%B3%95%E6%97%A0%E6%B3%95%E6%8E%A8%E9%80%81/</guid><description>&lt;h2 id="问题描述"&gt;问题描述
+&lt;/h2&gt;&lt;p&gt;当我们使用魔法软件在Git进行代码推送时，经常会遇到以下类似错误：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;fatal: unable to access &lt;span class="s1"&gt;&amp;#39;https://github.com/...&amp;#39;&lt;/span&gt;: failed to connect to 127.0.0.1
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;port &lt;span class="m"&gt;7890&lt;/span&gt; after &lt;span class="m"&gt;2092&lt;/span&gt; ms: couldn&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;t connect to server
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;⚠️ 注意：&lt;/strong&gt; 这个问题通常是由于代理端口配置不正确导致的。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id="解决方案"&gt;解决方案
+&lt;/h2&gt;&lt;h3 id="在开始之前请确保您的代理服务正常运行且网络流畅"&gt;在开始之前，请确保您的代理服务正常运行，且网络流畅
+&lt;/h3&gt;&lt;h3 id="步骤一查看代理服务器端口"&gt;步骤一：查看代理服务器端口
+&lt;/h3&gt;&lt;p&gt;在您的电脑中依次打开：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;设置 → 网络和Internet → 代理 → 手动设置代理 → 编辑&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;查看代理服务器地址右侧的端口号，先记下来&lt;/p&gt;
+&lt;h3 id="步骤二打开cmd终端"&gt;步骤二：打开cmd终端
+&lt;/h3&gt;&lt;p&gt;依次输入以下命令：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global http.proxy http://127.0.0.1:&lt;span class="o"&gt;(&lt;/span&gt;端口号&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global https.proxy http://127.0.0.1:&lt;span class="o"&gt;(&lt;/span&gt;端口号&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="步骤三检验配置是否完成"&gt;步骤三：检验配置是否完成
+&lt;/h3&gt;&lt;p&gt;继续在终端输入以下代码：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global -l
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;✅ 成功提示：&lt;/strong&gt; 如果看到输出了账户信息，说明配置完成。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id="常见问题"&gt;常见问题
+&lt;/h2&gt;&lt;h3 id="如何取消代理配置"&gt;如何取消代理配置？
+&lt;/h3&gt;&lt;p&gt;如果以后不需要使用代理，可以通过以下命令取消：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global --unset http.proxy
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global --unset https.proxy
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="端口号常见值"&gt;端口号常见值
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;7890&lt;/strong&gt; - Clash for Windows 默认端口&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;1080&lt;/strong&gt; - 一些代理软件的默认端口&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;8080&lt;/strong&gt; - 部分代理工具使用的端口&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="验证代理是否生效"&gt;验证代理是否生效
+&lt;/h3&gt;&lt;p&gt;可以通过以下命令测试：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git ls-remote https://github.com/octocat/Hello-World.git
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果能够正常获取远程仓库信息，说明代理配置成功。&lt;/p&gt;
+&lt;h2 id="总结"&gt;总结
+&lt;/h2&gt;&lt;p&gt;通过正确配置Git的代理设置，可以解决在使用魔法软件时无法推送代码的问题。关键是要确保：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;代理软件正常运行&lt;/li&gt;
+&lt;li&gt;端口号配置正确&lt;/li&gt;
+&lt;li&gt;网络连接稳定&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;希望这篇文章能帮助您解决Git推送的问题！&lt;/p&gt;</description></item></channel></rss>
