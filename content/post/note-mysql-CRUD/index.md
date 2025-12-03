@@ -148,12 +148,3 @@ DELIMITER ;
 CALL GetUserCount();
 
 
-## 🚀 12. SQL 优化技巧（重点面试题）
-
--- 尽量避免 SELECT *
--- 使用覆盖索引减少回表
--- 对高频过滤字段建索引
--- WHERE 中不要使用函数，如 DATE(created_at)
--- 深分页 LIMIT 100000,10 性能差，推荐用 “延迟关联”
--- 使用 EXPLAIN 分析执行计划
--- 合理使用复合索引提升查询效率
