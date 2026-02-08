@@ -1,6 +1,6 @@
 ---
-title: MySQL 面试问答总结
-description: 汇总 MySQL 慢查询、索引、事务、分库分表等面试问答
+title: MySQL 面试高频问答总结（问答实录）
+description: 汇总 MySQL 高频面试 Q&A 总结
 slug: mysql-interview-qa
 date: 2025-11-25 00:00:00+0000
 image: mysql-qa-cover.jpg
