@@ -2,7 +2,7 @@
 title: Spring框架面试题高频总结（问答实录）
 description: 精炼易记的 Spring 高频面试 Q&A 总结
 slug: spring-interview-qa
-date: 2025-10-29 00:00:00+0000
+date: 2026-02-08 00:00:00+0000
 image: spring-qa-cover.jpg
 categories:
     - 开发框架
