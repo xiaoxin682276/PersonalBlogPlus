@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Redis on 昕染的个人博客</title><link>https://personalblog.xiaoxin520.com/categories/redis/</link><description>Recent content in Redis on 昕染的个人博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Wed, 29 Oct 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://personalblog.xiaoxin520.com/categories/redis/index.xml" rel="self" type="application/rss+xml"/><item><title>Redis 面试题高频总结（问答实录）</title><link>https://personalblog.xiaoxin520.com/p/redis-interview-qa/</link><pubDate>Wed, 29 Oct 2025 00:00:00 +0000</pubDate><guid>https://personalblog.xiaoxin520.com/p/redis-interview-qa/</guid><description>&lt;img src="https://personalblog.xiaoxin520.com/p/redis-interview-qa/redis-qa-cover.jpg" alt="Featured image of post Redis 面试题高频总结（问答实录）" /&gt;&lt;h4 id="1-什么是缓存穿透怎么解决"&gt;1. 什么是缓存穿透？怎么解决？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：缓存穿透指查询一定不存在的数据，由于数据库查不到，也不会写入缓存，导致每次请求都打到 DB。&lt;br&gt;
+&lt;strong&gt;解决方案&lt;/strong&gt;：使用 &lt;strong&gt;布隆过滤器&lt;/strong&gt; 拦截无效请求。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="2-你能介绍一下布隆过滤器吗"&gt;2. 你能介绍一下布隆过滤器吗？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：布隆过滤器用来判断元素是否在集合中。底层是一个 bit 数组，通过多次 hash 把 key 映射到不同位置并置为 1。&lt;br&gt;
+查找时只要有一位是 0，就说明不存在。虽然有少量误判（一般小于 5%），但能极大节省空间。我们项目用的是 &lt;strong&gt;Redisson 的布隆过滤器实现&lt;/strong&gt;。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="3-什么是缓存击穿怎么解决"&gt;3. 什么是缓存击穿？怎么解决？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：缓存击穿是指某个热点 key 过期瞬间，大量并发请求同时访问，导致都去查 DB。&lt;br&gt;
+&lt;strong&gt;解决办法&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;使用 &lt;strong&gt;互斥锁（SETNX）&lt;/strong&gt; 控制只有一个线程加载数据；&lt;/li&gt;
+&lt;li&gt;使用 &lt;strong&gt;逻辑过期&lt;/strong&gt;：缓存中保存过期时间字段，过期后由后台线程异步更新。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h4 id="4-什么是缓存雪崩怎么解决"&gt;4. 什么是缓存雪崩？怎么解决？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：雪崩是大量 key 同时过期，所有请求都访问 DB，造成压力暴增。&lt;br&gt;
+&lt;strong&gt;解决办法&lt;/strong&gt;：给缓存时间加上随机值，让 key 的过期时间分散。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="5-redis-和-mysql-如何保持一致性"&gt;5. Redis 和 MySQL 如何保持一致性？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：两种方案：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;强一致性&lt;/strong&gt;：用 &lt;strong&gt;Redisson 读写锁&lt;/strong&gt;，读写互斥；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;最终一致性&lt;/strong&gt;：用 &lt;strong&gt;Canal 监听 MySQL binlog&lt;/strong&gt;，实时更新 Redis。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="6-redis-的持久化方式有哪些"&gt;6. Redis 的持久化方式有哪些？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：有两种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;RDB&lt;/strong&gt;（快照）：定期将内存数据写入磁盘，恢复快但可能丢数据；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;AOF&lt;/strong&gt;（追加日志）：记录写命令，恢复完整但速度稍慢。&lt;br&gt;
+实际项目中多采用 &lt;strong&gt;RDB + AOF 混合持久化&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="7-redis-的过期删除策略"&gt;7. Redis 的过期删除策略？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：两种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;惰性删除&lt;/strong&gt;：访问时检查是否过期；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;定期删除&lt;/strong&gt;：后台定时扫描部分 key 删除。&lt;br&gt;
+Redis 实际上是两者结合使用。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="8-redis-的内存淘汰策略"&gt;8. Redis 的内存淘汰策略？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：常见的有：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;noeviction&lt;/code&gt;：内存满时报错；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;allkeys-lru&lt;/code&gt;：淘汰最近最少使用的数据；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;allkeys-lfu&lt;/code&gt;：淘汰访问频率最低的。&lt;br&gt;
+我们一般设置 &lt;code&gt;allkeys-lru&lt;/code&gt; 保证热点数据留存。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="9-redis-分布式锁如何实现"&gt;9. Redis 分布式锁如何实现？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：通过 &lt;code&gt;SETNX&lt;/code&gt; 实现互斥；也可以用 &lt;strong&gt;Redisson&lt;/strong&gt;，支持自动续期（看门狗机制）、可设置超时、可重入，性能更好。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="10-redisson-分布式锁能保证主从一致吗"&gt;10. Redisson 分布式锁能保证主从一致吗？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：不能。主节点宕机后，锁状态可能不同步到从节点。&lt;br&gt;
+可使用 &lt;strong&gt;红锁（RedLock）&lt;/strong&gt; 同时在多个 Redis 节点加锁，要求大多数节点成功，但性能较差，一般不建议生产使用。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="11-业务需要强一致性该怎么办"&gt;11. 业务需要强一致性该怎么办？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：如果业务对一致性要求极高，可以使用 &lt;strong&gt;ZooKeeper 分布式锁&lt;/strong&gt;，它能提供强一致保证。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="12-redis-集群有哪些模式"&gt;12. Redis 集群有哪些模式？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：主要有三种：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;主从复制&lt;/strong&gt;（读写分离）；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;哨兵模式&lt;/strong&gt;（自动故障转移）；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;分片集群&lt;/strong&gt;（海量数据分布式存储）。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h4 id="13-主从同步的流程"&gt;13. 主从同步的流程？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：分两步：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;全量同步&lt;/strong&gt;：slave 第一次连接时，master 生成 RDB 并传输；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;增量同步&lt;/strong&gt;：slave 重连后，通过 offset 获取主节点的增量命令日志。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="14-redis-脑裂怎么解决"&gt;14. Redis 脑裂怎么解决？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：脑裂是主从间网络分区，出现两个 master。&lt;br&gt;
+可通过配置：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;设置最少从节点数；&lt;/li&gt;
+&lt;li&gt;限制主从复制延迟阈值，防止数据丢失。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="15-分片集群数据如何存储"&gt;15. 分片集群数据如何存储？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：Redis 集群引入了 &lt;strong&gt;16384 个哈希槽&lt;/strong&gt;，key 通过 &lt;code&gt;CRC16(key) % 16384&lt;/code&gt; 定位到对应节点，实现负载均衡与高并发。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="16-redis-为什么这么快"&gt;16. Redis 为什么这么快？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：主要因为：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;完全基于内存；&lt;/li&gt;
+&lt;li&gt;单线程避免锁竞争；&lt;/li&gt;
+&lt;li&gt;使用 &lt;strong&gt;I/O 多路复用（epoll）&lt;/strong&gt;；&lt;/li&gt;
+&lt;li&gt;核心命令执行流程极短。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h4 id="17-什么是-io-多路复用"&gt;17. 什么是 I/O 多路复用？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：一个线程同时监听多个 socket，当某个 socket 可读/写时统一处理，不用轮询。&lt;br&gt;
+Redis 使用 &lt;strong&gt;epoll + 事件驱动模型&lt;/strong&gt;，高效处理成千上万的连接。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="总结"&gt;总结
+&lt;/h3&gt;&lt;p&gt;Redis 面试的核心在于三点：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;缓存问题三兄弟&lt;/strong&gt;：穿透、击穿、雪崩；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;一致性与持久化&lt;/strong&gt;：RDB、AOF、锁机制；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;高可用与高性能&lt;/strong&gt;：主从、哨兵、分片、I/O 模型。&lt;/li&gt;
+&lt;/ol&gt;</description></item></channel></rss>

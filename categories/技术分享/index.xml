@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>技术分享 on 昕染的个人博客</title><link>https://personalblog.xiaoxin520.com/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/</link><description>Recent content in 技术分享 on 昕染的个人博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 23 Sep 2025 00:00:00 +0800</lastBuildDate><atom:link href="https://personalblog.xiaoxin520.com/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/index.xml" rel="self" type="application/rss+xml"/><item><title>idea构建项目时无法识别方法或变量</title><link>https://personalblog.xiaoxin520.com/p/idea%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E6%97%B6%E6%97%A0%E6%B3%95%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E6%88%96%E5%8F%98%E9%87%8F/</link><pubDate>Tue, 23 Sep 2025 00:00:00 +0800</pubDate><guid>https://personalblog.xiaoxin520.com/p/idea%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E6%97%B6%E6%97%A0%E6%B3%95%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E6%88%96%E5%8F%98%E9%87%8F/</guid><description>&lt;img src="https://personalblog.xiaoxin520.com/p/idea%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E6%97%B6%E6%97%A0%E6%B3%95%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E6%88%96%E5%8F%98%E9%87%8F/cover.jpg" alt="Featured image of post idea构建项目时无法识别方法或变量" /&gt;&lt;p&gt;这种情况很让人莫名其妙，博主在排查了很久之后排除了代码自身问题所在，通过之后的资料查询找到了以下的方法：&lt;/p&gt;
+&lt;h2 id="现象"&gt;现象
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;IDEA 编译无报错，但运行时报错：&lt;code&gt;cannot find symbol / 找不到符号&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;清理、重建项目后依旧复现&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="根因猜测"&gt;根因猜测
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;多数情况下与 IDEA 自身构建/运行时对 Maven 的处理不一致有关（构建使用 Maven，运行使用 IDEA 内置编译缓存）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="解决步骤"&gt;解决步骤
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;先对要启动的模块执行一次安装（确保依赖产物可用）：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mvn clean install -DskipTests
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;或者直接使用右侧栏的Maven小插件执行安装。&lt;/p&gt;
+&lt;ol start="2"&gt;
+&lt;li&gt;
+&lt;p&gt;打开 IDEA 设置：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;路径：设置 -&amp;gt; 构建 -&amp;gt; Maven&lt;/li&gt;
+&lt;li&gt;勾选「正在运行程序」（意为运行时也使用 Maven 方式，避免与 IDE 内置编译产生不一致）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;重新运行项目进行验证。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://personalblog.xiaoxin520.com/p/idea%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E6%97%B6%E6%97%A0%E6%B3%95%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E6%88%96%E5%8F%98%E9%87%8F/show.jpg"
+width="1388"
+height="717"
+srcset="https://personalblog.xiaoxin520.com/p/idea%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E6%97%B6%E6%97%A0%E6%B3%95%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E6%88%96%E5%8F%98%E9%87%8F/show_hu_9289346e8c6034c3.jpg 480w, https://personalblog.xiaoxin520.com/p/idea%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E6%97%B6%E6%97%A0%E6%B3%95%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E6%88%96%E5%8F%98%E9%87%8F/show_hu_52a0d0c74073429f.jpg 1024w"
+loading="lazy"
+alt="IDEA Maven 运行设置示意图"
+class="gallery-image"
+data-flex-grow="193"
+data-flex-basis="464px"
+&gt;&lt;/p&gt;
+&lt;h2 id="补充建议"&gt;补充建议
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;若仍有问题，可尝试：
+&lt;ul&gt;
+&lt;li&gt;File -&amp;gt; Invalidate Caches… -&amp;gt; Invalidate and Restart&lt;/li&gt;
+&lt;li&gt;删除 &lt;code&gt;~/.m2/repository&lt;/code&gt; 中可疑缓存后重试 &lt;code&gt;mvn clean install&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;确认 JDK 版本与项目的 &lt;code&gt;maven-compiler-plugin&lt;/code&gt; 配置一致&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;尽量统一「构建」与「运行」方式（都走 Maven 或都走 Gradle/IDEA 内置）以减少环境差异。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;很神奇地，这样就跑通了，可以作为参考。&lt;/p&gt;</description></item><item><title>git国内使用魔法无法推送</title><link>https://personalblog.xiaoxin520.com/p/git%E5%9B%BD%E5%86%85%E4%BD%BF%E7%94%A8%E9%AD%94%E6%B3%95%E6%97%A0%E6%B3%95%E6%8E%A8%E9%80%81/</link><pubDate>Mon, 15 Sep 2025 00:00:00 +0800</pubDate><guid>https://personalblog.xiaoxin520.com/p/git%E5%9B%BD%E5%86%85%E4%BD%BF%E7%94%A8%E9%AD%94%E6%B3%95%E6%97%A0%E6%B3%95%E6%8E%A8%E9%80%81/</guid><description>&lt;h2 id="问题描述"&gt;问题描述
+&lt;/h2&gt;&lt;p&gt;当我们使用魔法软件在Git进行代码推送时，经常会遇到以下类似错误：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;fatal: unable to access &lt;span class="s1"&gt;&amp;#39;https://github.com/...&amp;#39;&lt;/span&gt;: failed to connect to 127.0.0.1
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;port &lt;span class="m"&gt;7890&lt;/span&gt; after &lt;span class="m"&gt;2092&lt;/span&gt; ms: couldn&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;t connect to server
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;⚠️ 注意：&lt;/strong&gt; 这个问题通常是由于代理端口配置不正确导致的。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id="解决方案"&gt;解决方案
+&lt;/h2&gt;&lt;h3 id="在开始之前请确保您的代理服务正常运行且网络流畅"&gt;在开始之前，请确保您的代理服务正常运行，且网络流畅
+&lt;/h3&gt;&lt;h3 id="步骤一查看代理服务器端口"&gt;步骤一：查看代理服务器端口
+&lt;/h3&gt;&lt;p&gt;在您的电脑中依次打开：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;设置 → 网络和Internet → 代理 → 手动设置代理 → 编辑&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;查看代理服务器地址右侧的端口号，先记下来&lt;/p&gt;
+&lt;h3 id="步骤二打开cmd终端"&gt;步骤二：打开cmd终端
+&lt;/h3&gt;&lt;p&gt;依次输入以下命令：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global http.proxy http://127.0.0.1:&lt;span class="o"&gt;(&lt;/span&gt;端口号&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global https.proxy http://127.0.0.1:&lt;span class="o"&gt;(&lt;/span&gt;端口号&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="步骤三检验配置是否完成"&gt;步骤三：检验配置是否完成
+&lt;/h3&gt;&lt;p&gt;继续在终端输入以下代码：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global -l
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;✅ 成功提示：&lt;/strong&gt; 如果看到输出了账户信息，说明配置完成。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id="常见问题"&gt;常见问题
+&lt;/h2&gt;&lt;h3 id="如何取消代理配置"&gt;如何取消代理配置？
+&lt;/h3&gt;&lt;p&gt;如果以后不需要使用代理，可以通过以下命令取消：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global --unset http.proxy
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global --unset https.proxy
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="端口号常见值"&gt;端口号常见值
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;7890&lt;/strong&gt; - Clash for Windows 默认端口&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;1080&lt;/strong&gt; - 一些代理软件的默认端口&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;8080&lt;/strong&gt; - 部分代理工具使用的端口&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="验证代理是否生效"&gt;验证代理是否生效
+&lt;/h3&gt;&lt;p&gt;可以通过以下命令测试：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git ls-remote https://github.com/octocat/Hello-World.git
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果能够正常获取远程仓库信息，说明代理配置成功。&lt;/p&gt;
+&lt;h2 id="总结"&gt;总结
+&lt;/h2&gt;&lt;p&gt;通过正确配置Git的代理设置，可以解决在使用魔法软件时无法推送代码的问题。关键是要确保：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;代理软件正常运行&lt;/li&gt;
+&lt;li&gt;端口号配置正确&lt;/li&gt;
+&lt;li&gt;网络连接稳定&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;希望这篇文章能帮助您解决Git推送的问题！&lt;/p&gt;</description></item></channel></rss>

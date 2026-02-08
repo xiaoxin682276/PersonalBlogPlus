@@ -1,0 +1,1988 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on 昕染的个人博客</title><link>https://personalblog.xiaoxin520.com/post/</link><description>Recent content in Posts on 昕染的个人博客</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 08 Feb 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://personalblog.xiaoxin520.com/post/index.xml" rel="self" type="application/rss+xml"/><item><title>Spring框架面试题高频总结（问答实录）</title><link>https://personalblog.xiaoxin520.com/p/spring-interview-qa/</link><pubDate>Sun, 08 Feb 2026 00:00:00 +0000</pubDate><guid>https://personalblog.xiaoxin520.com/p/spring-interview-qa/</guid><description>&lt;img src="https://personalblog.xiaoxin520.com/p/spring-interview-qa/spring-qa-cover.jpg" alt="Featured image of post Spring框架面试题高频总结（问答实录）" /&gt;&lt;h4 id="1-spring框架中的单例bean是线程安全的吗"&gt;1. Spring框架中的单例bean是线程安全的吗？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+不是线程安全的。当多个请求并发访问时，可能会修改单例bean的共享状态，导致线程安全问题。Spring不自动处理单例bean的线程安全，开发者需要自己保证。如果bean的状态是不可变的（如Service类或DAO类），则可以认为是线程安全的。如果bean有可变状态（如ViewModel对象），则需要手动处理线程安全，或者将bean的作用域从“singleton”改为“prototype”。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="2-什么是aop"&gt;2. 什么是AOP？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+AOP，即面向切面编程，在Spring中用于将那些与业务无关但对多个对象产生影响的公共行为和逻辑抽取出来，实现公共模块复用，降低耦合。常见的应用场景包括公共日志保存和事务处理。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="3-你们项目中有没有使用到aop"&gt;3. 你们项目中有没有使用到AOP？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+我们之前在后台管理系统中使用AOP来记录系统操作日志。主要思路是使用AOP的环绕通知和切点表达式，找到需要记录日志的方法，然后通过环绕通知的参数获取请求方法的参数，例如类信息、方法信息、注解、请求方式等，并将这些参数保存到数据库。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="4-spring中的事务是如何实现的"&gt;4. Spring中的事务是如何实现的？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+Spring实现事务的本质是利用AOP完成的。它对方法前后进行拦截，在执行方法前开启事务，在执行完目标方法后根据执行情况提交或回滚事务。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="5-spring中事务失效的场景有哪些"&gt;5. Spring中事务失效的场景有哪些？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+在项目中，我遇到过几种导致事务失效的场景：
+&lt;ol&gt;
+&lt;li&gt;如果方法内部捕获并处理了异常，没有将异常抛出，会导致事务失效。因此，处理异常后应该确保异常能够被抛出。&lt;/li&gt;
+&lt;li&gt;如果方法抛出检查型异常（checked exception），并且没有在@Transactional注解上配置rollbackFor属性为Exception，那么异常发生时事务可能不会回滚。&lt;/li&gt;
+&lt;li&gt;如果事务注解的方法不是公开（public）修饰的，也可能导致事务失效。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="6-spring的bean的生命周期"&gt;6. Spring的bean的生命周期？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+Spring中bean的生命周期包括以下步骤：
+&lt;ol&gt;
+&lt;li&gt;通过BeanDefinition获取bean的定义信息。&lt;/li&gt;
+&lt;li&gt;调用构造函数实例化bean。&lt;/li&gt;
+&lt;li&gt;进行bean的依赖注入，例如通过setter方法或@Autowired注解。&lt;/li&gt;
+&lt;li&gt;处理实现了Aware接口的bean。&lt;/li&gt;
+&lt;li&gt;执行BeanPostProcessor的前置处理器。&lt;/li&gt;
+&lt;li&gt;调用初始化方法，如实现了InitializingBean接口或自定义的init-method。&lt;/li&gt;
+&lt;li&gt;执行BeanPostProcessor的后置处理器，可能在这里产生代理对象。&lt;/li&gt;
+&lt;li&gt;最后是销毁bean。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="7-spring中的循环引用"&gt;7. Spring中的循环引用？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+循环依赖发生在两个或两个以上的bean互相持有对方，形成闭环。Spring框架允许循环依赖存在，并通过三级缓存解决大部分循环依赖问题：
+&lt;ol&gt;
+&lt;li&gt;一级缓存：单例池，缓存已完成初始化的bean对象。&lt;/li&gt;
+&lt;li&gt;二级缓存：缓存尚未完成生命周期的早期bean对象。&lt;/li&gt;
+&lt;li&gt;三级缓存：缓存ObjectFactory，用于创建bean对象。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="8-那具体解决流程清楚吗"&gt;8. 那具体解决流程清楚吗？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+解决循环依赖的流程如下：
+&lt;ol&gt;
+&lt;li&gt;实例化A对象，并创建ObjectFactory存入三级缓存。&lt;/li&gt;
+&lt;li&gt;A在初始化时需要B对象，开始B的创建逻辑。&lt;/li&gt;
+&lt;li&gt;B实例化完成，也创建ObjectFactory存入三级缓存。&lt;/li&gt;
+&lt;li&gt;B需要注入A，通过三级缓存获取ObjectFactory生成A对象，存入二级缓存。&lt;/li&gt;
+&lt;li&gt;B通过二级缓存获得A对象后，B创建成功，存入一级缓存。&lt;/li&gt;
+&lt;li&gt;A对象初始化时，由于B已创建完成，可以直接注入B，A创建成功存入一级缓存。&lt;/li&gt;
+&lt;li&gt;清除二级缓存中的临时对象A。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="9-构造方法出现了循环依赖怎么解决"&gt;9. 构造方法出现了循环依赖怎么解决？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+由于构造函数是bean生命周期中最先执行的，Spring框架无法解决构造方法的循环依赖问题。可以使用@Lazy懒加载注解，延迟bean的创建直到实际需要时。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="10-springmvc的执行流程"&gt;10. SpringMVC的执行流程？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+SpringMVC的执行流程包括以下步骤：
+1. 用户发送请求到前端控制器DispatcherServlet。
+2. DispatcherServlet调用HandlerMapping找到具体处理器。
+3. HandlerMapping返回处理器对象及拦截器（如果有）给DispatcherServlet。
+4. DispatcherServlet调用HandlerAdapter。
+5. HandlerAdapter适配并调用具体处理器（Controller）。
+6. Controller执行并返回ModelAndView对象。
+7. HandlerAdapter将ModelAndView返回给DispatcherServlet。
+8. DispatcherServlet传给ViewResolver进行视图解析。
+9. ViewResolver返回具体视图给DispatcherServlet。
+10. DispatcherServlet渲染视图并响应用户。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="11-springboot自动配置原理"&gt;11. Springboot自动配置原理？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+Spring Boot的自动配置原理基于@SpringBootApplication注解，它封装了@SpringBootConfiguration、@EnableAutoConfiguration和@ComponentScan。@EnableAutoConfiguration是核心，它通过@Import导入配置选择器，读取META-INF/spring.factories文件中的类名，根据条件注解决定是否将配置类中的Bean导入到Spring容器中。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="12-spring-的常见注解有哪些"&gt;12. Spring 的常见注解有哪些？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+Spring的常见注解包括：
+1. 声明Bean的注解：@Component、@Service、@Repository、@Controller。
+2. 依赖注入相关注解：@Autowired、@Qualifier、@Resource。
+3. 设置作用域的注解：@Scope。
+4. 配置相关注解：@Configuration、@ComponentScan、@Bean。
+5. AOP相关注解：@Aspect、@Before、@After、@Around、@Pointcut。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="13-springmvc常见的注解有哪些"&gt;13. SpringMVC常见的注解有哪些？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+SpringMVC的常见注解有：
+- @RequestMapping：映射请求路径。
+- @RequestBody：接收HTTP请求的JSON数据。
+- @RequestParam：指定请求参数名称。
+- @PathVariable：从请求路径中获取参数。
+- @ResponseBody：将Controller方法返回的对象转化为JSON。
+- @RequestHeader：获取请求头数据。
+- @PostMapping、@GetMapping等。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="14-springboot常见注解有哪些"&gt;14. Springboot常见注解有哪些？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+Spring Boot的常见注解包括：
+- @SpringBootApplication：由@SpringBootConfiguration、@EnableAutoConfiguration和@ComponentScan组成。
+- 其他注解如@RestController、@GetMapping、@PostMapping等，用于简化Spring MVC的配置。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="15-mybatis执行流程"&gt;15. MyBatis执行流程？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+MyBatis的执行流程如下：
+1. 读取MyBatis配置文件mybatis-config.xml。
+2. 构造会话工厂SqlSessionFactory。
+3. 会话工厂创建SqlSession对象。
+4. 操作数据库的接口，Executor执行器。
+5. Executor执行方法中的MappedStatement参数。
+6. 输入参数映射。
+7. 输出结果映射。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="16-mybatis是否支持延迟加载"&gt;16. Mybatis是否支持延迟加载？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+MyBatis支持延迟加载，即在需要用到数据时才加载。可以通过配置文件中的lazyLoadingEnabled配置启用或禁用延迟加载。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="17-延迟加载的底层原理知道吗"&gt;17. 延迟加载的底层原理知道吗？
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;答：&lt;/strong&gt;
+延迟加载的底层原理主要使用CGLIB动态代理实现：
+1. 使用CGLIB创建目标对象的代理对象。
+2. 调用目标方法时，如果发现是null值，则执行SQL查询。
+3. 获取数据后，设置属性值并继续查询目标方法。&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>MySQL 面试常见增删改查与高频知识点总结</title><link>https://personalblog.xiaoxin520.com/p/mysql-crud-interview/</link><pubDate>Wed, 03 Dec 2025 00:00:00 +0000</pubDate><guid>https://personalblog.xiaoxin520.com/p/mysql-crud-interview/</guid><description>&lt;h3 id="mysql-面试常见增删改查与知识点总结"&gt;MySQL 面试常见增删改查与知识点总结
+&lt;/h3&gt;&lt;p&gt;在面试中，MySQL 是后端岗位最常考的基础能力之一。本文不仅总结了常用 CRUD 语句，还包含常见索引、事务、锁机制等核心知识点，适用于面试快速复习。&lt;/p&gt;
+&lt;h2 id="-1-创建表create-table"&gt;🟢 1. 创建表（CREATE TABLE）
+&lt;/h2&gt;&lt;p&gt;CREATE TABLE users (
+id INT PRIMARY KEY AUTO_INCREMENT,
+name VARCHAR(50) NOT NULL,
+age INT CHECK (age &amp;gt;= 0),
+email VARCHAR(100) UNIQUE,
+status TINYINT DEFAULT 1,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);&lt;/p&gt;
+&lt;h2 id="-2-插入数据insert"&gt;🟡 2. 插入数据（INSERT）
+&lt;/h2&gt;&lt;p&gt;INSERT INTO users (name, age, email)
+VALUES (&amp;lsquo;Alice&amp;rsquo;, 25, &amp;lsquo;&lt;a class="link" href="mailto:alice@example.com" &gt;alice@example.com&lt;/a&gt;&amp;rsquo;);&lt;/p&gt;
+&lt;p&gt;INSERT INTO users (name, age, email)
+VALUES
+(&amp;lsquo;Bob&amp;rsquo;, 30, &amp;lsquo;&lt;a class="link" href="mailto:bob@example.com" &gt;bob@example.com&lt;/a&gt;&amp;rsquo;),
+(&amp;lsquo;Charlie&amp;rsquo;, 28, &amp;lsquo;&lt;a class="link" href="mailto:charlie@example.com" &gt;charlie@example.com&lt;/a&gt;&amp;rsquo;);&lt;/p&gt;
+&lt;p&gt;INSERT IGNORE INTO users (email) VALUES (&amp;lsquo;&lt;a class="link" href="mailto:alice@example.com" &gt;alice@example.com&lt;/a&gt;&amp;rsquo;);&lt;/p&gt;
+&lt;p&gt;REPLACE INTO users(id, name, email)
+VALUES (1, &amp;lsquo;Tom&amp;rsquo;, &amp;rsquo;&lt;a class="link" href="mailto:tom@example.com" &gt;tom@example.com&lt;/a&gt;&amp;rsquo;);&lt;/p&gt;
+&lt;h2 id="-3-查询数据select"&gt;🔵 3. 查询数据（SELECT）
+&lt;/h2&gt;&lt;p&gt;SELECT * FROM users WHERE age &amp;gt; 20;&lt;/p&gt;
+&lt;p&gt;SELECT status, COUNT(*) AS total
+FROM users
+GROUP BY status
+HAVING total &amp;gt; 1;&lt;/p&gt;
+&lt;p&gt;SELECT * FROM users ORDER BY created_at DESC;&lt;/p&gt;
+&lt;p&gt;SELECT * FROM users LIMIT 20 OFFSET 0;&lt;/p&gt;
+&lt;p&gt;SELECT * FROM users
+WHERE age &amp;gt; (SELECT AVG(age) FROM users);&lt;/p&gt;
+&lt;h2 id="-4-更新数据update"&gt;🟠 4. 更新数据（UPDATE）
+&lt;/h2&gt;&lt;p&gt;UPDATE users
+SET age = age + 1
+WHERE id = 1;&lt;/p&gt;
+&lt;p&gt;UPDATE users
+SET age = 26, status = 0
+WHERE email = &amp;lsquo;&lt;a class="link" href="mailto:alice@example.com" &gt;alice@example.com&lt;/a&gt;&amp;rsquo;;&lt;/p&gt;
+&lt;h2 id="-5-删除数据delete"&gt;🔴 5. 删除数据（DELETE）
+&lt;/h2&gt;&lt;p&gt;DELETE FROM users WHERE id = 3;&lt;/p&gt;
+&lt;p&gt;DELETE FROM users;&lt;/p&gt;
+&lt;p&gt;TRUNCATE TABLE users;&lt;/p&gt;
+&lt;h2 id="-6-外键foreign-key"&gt;🧩 6. 外键（FOREIGN KEY）
+&lt;/h2&gt;&lt;p&gt;CREATE TABLE orders (
+id INT PRIMARY KEY AUTO_INCREMENT,
+user_id INT,
+amount DECIMAL(10,2),
+FOREIGN KEY(user_id) REFERENCES users(id)
+ON DELETE CASCADE
+ON UPDATE CASCADE
+);&lt;/p&gt;
+&lt;h2 id="-7-索引index"&gt;🧱 7. 索引（INDEX）
+&lt;/h2&gt;&lt;p&gt;CREATE INDEX idx_age ON users(age);&lt;/p&gt;
+&lt;p&gt;CREATE INDEX idx_name_email ON users(name, email);&lt;/p&gt;
+&lt;p&gt;&amp;ndash; 索引重点：
+&amp;ndash; 1. 最左前缀原则
+&amp;ndash; 2. 覆盖索引
+&amp;ndash; 3. 前缀模糊查询索引失效（LIKE &amp;lsquo;%abc&amp;rsquo;）
+&amp;ndash; 4. 对索引字段使用函数会导致索引失效&lt;/p&gt;
+&lt;h2 id="-8-事务transaction"&gt;🔐 8. 事务（Transaction）
+&lt;/h2&gt;&lt;p&gt;START TRANSACTION;&lt;/p&gt;
+&lt;p&gt;UPDATE users SET age = age + 1 WHERE id = 1;
+UPDATE accounts SET money = money - 100 WHERE user_id = 1;&lt;/p&gt;
+&lt;p&gt;COMMIT;&lt;/p&gt;
+&lt;p&gt;&amp;ndash; 回滚示例
+ROLLBACK;&lt;/p&gt;
+&lt;p&gt;&amp;ndash; ACID
+&amp;ndash; A：原子性
+&amp;ndash; C：一致性
+&amp;ndash; I：隔离性
+&amp;ndash; D：持久性&lt;/p&gt;
+&lt;h2 id="-9-锁机制innodb"&gt;🔒 9. 锁机制（InnoDB）
+&lt;/h2&gt;&lt;p&gt;&amp;ndash; 行锁（排他锁）
+SELECT * FROM users WHERE id = 1 FOR UPDATE;&lt;/p&gt;
+&lt;p&gt;&amp;ndash; 共享锁（读锁）
+SELECT * FROM users WHERE id = 1 LOCK IN SHARE MODE;&lt;/p&gt;
+&lt;p&gt;&amp;ndash; 间隙锁（Next-Key Lock）通常出现在范围查询中
+SELECT * FROM users WHERE age &amp;gt; 20 FOR UPDATE;&lt;/p&gt;
+&lt;h2 id="-10-视图view"&gt;📄 10. 视图（VIEW）
+&lt;/h2&gt;&lt;p&gt;CREATE VIEW active_users AS
+SELECT id, name FROM users WHERE status = 1;&lt;/p&gt;
+&lt;p&gt;UPDATE active_users SET name = &amp;lsquo;NewName&amp;rsquo; WHERE id = 1;&lt;/p&gt;
+&lt;h2 id="-11-存储过程stored-procedure"&gt;⚙️ 11. 存储过程（Stored Procedure）
+&lt;/h2&gt;&lt;p&gt;DELIMITER &lt;/p&gt;
+$$
+CREATE PROCEDURE GetUserCount()
+BEGIN
+SELECT COUNT(*) FROM users;
+END$$&lt;p&gt;
+DELIMITER ;&lt;/p&gt;
+&lt;p&gt;CALL GetUserCount();&lt;/p&gt;</description></item><item><title>MySQL 面试高频问答总结（问答实录）</title><link>https://personalblog.xiaoxin520.com/p/mysql-interview-qa/</link><pubDate>Tue, 25 Nov 2025 00:00:00 +0000</pubDate><guid>https://personalblog.xiaoxin520.com/p/mysql-interview-qa/</guid><description>&lt;img src="https://personalblog.xiaoxin520.com/p/mysql-interview-qa/mysql-qa-cover.jpg" alt="Featured image of post MySQL 面试高频问答总结（问答实录）" /&gt;&lt;h4 id="1-mysql中如何定位慢查询"&gt;1. MySQL中，如何定位慢查询？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+在压力测试时发现接口响应时间慢，可以通过运维监控系统（如 Skywalking）查看具体接口耗时和 SQL 执行时间。如果没有监控系统，MySQL 提供慢查询日志功能，可以在配置文件开启，并设置阈值（例如 2 秒），超过阈值的 SQL 会记录在日志中，从日志中找到慢 SQL。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="2-sql语句执行很慢如何分析"&gt;2. SQL语句执行很慢，如何分析？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+使用 &lt;code&gt;EXPLAIN&lt;/code&gt; 命令分析 SQL 执行计划：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;key&lt;/code&gt; 和 &lt;code&gt;key_len&lt;/code&gt;：检查是否命中索引。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;type&lt;/code&gt;：查看访问类型，判断是否存在全表扫描。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Extra&lt;/code&gt;：判断是否回表，可根据提示优化索引或修改返回字段。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="3-了解索引吗什么是索引"&gt;3. 了解索引吗？什么是索引？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+索引是一种数据结构，用于加速数据检索、排序和分组，降低数据库 I/O 和 CPU 消耗。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="4-索引的底层数据结构了解吗"&gt;4. 索引的底层数据结构了解吗？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+InnoDB 默认使用 B+ 树：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;节点可以有更多子节点，路径更短。&lt;/li&gt;
+&lt;li&gt;非叶子节点只存储键值和指针，叶子节点存储数据。&lt;/li&gt;
+&lt;li&gt;叶子节点形成双向链表，适合范围查询。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="5-b树和b树的区别"&gt;5. B树和B+树的区别？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;B树非叶子和叶子节点都存储数据；B+树所有数据只在叶子节点。&lt;/li&gt;
+&lt;li&gt;B+树范围查询效率更高，叶子节点形成双向链表。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h4 id="6-聚簇索引和非聚簇索引"&gt;6. 聚簇索引和非聚簇索引？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;聚簇索引：数据与索引放一起，叶子节点保存整行数据，一般由主键构成。&lt;/li&gt;
+&lt;li&gt;非聚簇索引：数据与索引分开，叶子节点保存主键值，可有多个。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="7-什么是回表查询"&gt;7. 什么是回表查询？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+通过二级索引获取主键值，然后再访问聚簇索引中的整行数据。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="8-什么是覆盖索引"&gt;8. 什么是覆盖索引？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+查询所需字段全部在索引中，不需要回表，减少查询次数，提高效率。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="9-mysql-超大分页如何处理"&gt;9. MySQL 超大分页如何处理？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+使用 LIMIT 大分页效率低。可先查询 ID 列分页，再通过子查询过滤数据，利用覆盖索引提高效率。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="10-索引创建原则有哪些"&gt;10. 索引创建原则有哪些？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;数据量大 (&amp;gt;10 万) 时创建索引。&lt;/li&gt;
+&lt;li&gt;查询频繁的字段、排序字段、分组字段优先。&lt;/li&gt;
+&lt;li&gt;尽量使用复合索引覆盖查询字段。&lt;/li&gt;
+&lt;li&gt;低区分度字段放组合索引后面。&lt;/li&gt;
+&lt;li&gt;长字段可用前缀索引。&lt;/li&gt;
+&lt;li&gt;控制索引数量，平衡写入性能。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="11-索引什么时候会失效"&gt;11. 索引什么时候会失效？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;不遵循最左匹配原则。&lt;/li&gt;
+&lt;li&gt;模糊查询 &lt;code&gt;%xxx&lt;/code&gt; 前置。&lt;/li&gt;
+&lt;li&gt;索引字段上做运算或类型转换。&lt;/li&gt;
+&lt;li&gt;复合索引中间使用范围查询，右侧条件失效。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="12-sql-优化经验有哪些"&gt;12. SQL 优化经验有哪些？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;避免 SELECT *，明确字段。&lt;/li&gt;
+&lt;li&gt;聚合查询使用 UNION ALL 代替 UNION。&lt;/li&gt;
+&lt;li&gt;表关联优先 INNER JOIN，小表驱动。&lt;/li&gt;
+&lt;li&gt;主从复制和读写分离提升性能。&lt;/li&gt;
+&lt;li&gt;大数据量考虑分库分表。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="13-创建表时如何优化"&gt;13. 创建表时如何优化？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+选择字段类型与内容匹配：数值选 TINYINT/INT/BIGINT，字符串选 CHAR/VARCHAR/TEXT，避免冗长字段。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="14-使用索引时如何优化"&gt;14. 使用索引时如何优化？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+确保索引字段是查询频繁字段，复合索引覆盖查询字段，避免在索引字段上做运算或类型转换，控制索引数量。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="15-sql-语句优化实践"&gt;15. SQL 语句优化实践？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;指定字段，避免 SELECT *&lt;/li&gt;
+&lt;li&gt;聚合使用 UNION ALL&lt;/li&gt;
+&lt;li&gt;表关联优先 INNER JOIN，小表驱动&lt;/li&gt;
+&lt;li&gt;LEFT/RIGHT JOIN 时，小表做驱动表&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="16-事务特性是什么"&gt;16. 事务特性是什么？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+ACID：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;原子性（Atomicity）&lt;/li&gt;
+&lt;li&gt;一致性（Consistency）&lt;/li&gt;
+&lt;li&gt;隔离性（Isolation）&lt;/li&gt;
+&lt;li&gt;持久性（Durability）&lt;br&gt;
+示例：A 向 B 转账 500 元，要么全部成功，要么全部失败。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="17-并发事务可能带来哪些问题"&gt;17. 并发事务可能带来哪些问题？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;脏读：读到未提交的数据&lt;/li&gt;
+&lt;li&gt;不可重复读：事务内多次读数据不一致&lt;/li&gt;
+&lt;li&gt;幻读：读到其他事务插入的新行&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="18-如何解决并发问题默认隔离级别"&gt;18. 如何解决并发问题？默认隔离级别？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;br&gt;
+使用事务隔离：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;READ UNCOMMITTED：未提交读&lt;/li&gt;
+&lt;li&gt;READ COMMITTED：解决脏读&lt;/li&gt;
+&lt;li&gt;REPEATABLE READ（MySQL 默认）：解决脏读和不可重复读&lt;/li&gt;
+&lt;li&gt;SERIALIZABLE：解决所有问题，但性能低&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="19-redo-log-和-undo-log-区别"&gt;19. redo log 和 undo log 区别？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;redo log：记录数据页物理变化，用于持久化恢复&lt;/li&gt;
+&lt;li&gt;undo log：记录逻辑日志，用于回滚事务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="20-事务隔离如何保证mvcc-原理"&gt;20. 事务隔离如何保证？MVCC 原理？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;MVCC 通过维护多版本数据避免读写冲突&lt;/li&gt;
+&lt;li&gt;隐藏字段（trx_id, roll_pointer）、undo log、read view 快照实现&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="21-mysql-主从同步原理"&gt;21. MySQL 主从同步原理？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;主库写 Binlog&lt;/li&gt;
+&lt;li&gt;从库读取 Binlog 写 Relay Log&lt;/li&gt;
+&lt;li&gt;从库重做日志事件更新数据&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h4 id="22-项目中使用过分库分表吗"&gt;22. 项目中使用过分库分表吗？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;垂直拆分：微服务对应数据库&lt;/li&gt;
+&lt;li&gt;水平拆分：单表数据量大，用 mycat 按 ID 取模分片&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h3 id="总结"&gt;总结
+&lt;/h3&gt;&lt;p&gt;通过慢查询日志、EXPLAIN 分析、索引优化、事务控制及分库分表策略，可以有效提升 MySQL 性能，避免大数据量下的性能瓶颈。&lt;/p&gt;</description></item><item><title>六级高频词汇与替换整理</title><link>https://personalblog.xiaoxin520.com/p/english-vocab-summary/</link><pubDate>Thu, 20 Nov 2025 22:00:00 +0000</pubDate><guid>https://personalblog.xiaoxin520.com/p/english-vocab-summary/</guid><description>&lt;h3 id="英语高频词汇及替换整理"&gt;英语高频词汇及替换整理
+&lt;/h3&gt;&lt;p&gt;本文汇总了常用英语词汇，按照类别整理了原词、词性、中文释义，以及常用替换词和释义差异，方便学习和查阅。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="一情感类-emotion"&gt;一、情感类 Emotion
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;原词&lt;/th&gt;
+&lt;th&gt;词性&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;th&gt;替换词&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Angry&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;生气的&lt;/td&gt;
+&lt;td&gt;furious&lt;/td&gt;
+&lt;td&gt;狂怒的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;enraged&lt;/td&gt;
+&lt;td&gt;极度愤怒的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Fear&lt;/td&gt;
+&lt;td&gt;n.&lt;/td&gt;
+&lt;td&gt;害怕&lt;/td&gt;
+&lt;td&gt;horror&lt;/td&gt;
+&lt;td&gt;极度恐惧&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;fright&lt;/td&gt;
+&lt;td&gt;突发惊吓&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Scared&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;害怕的&lt;/td&gt;
+&lt;td&gt;disturbed&lt;/td&gt;
+&lt;td&gt;不安的，精神困扰&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;frightened&lt;/td&gt;
+&lt;td&gt;害怕的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;terrified&lt;/td&gt;
+&lt;td&gt;极度恐惧的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Happy&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;快乐的&lt;/td&gt;
+&lt;td&gt;satisfied&lt;/td&gt;
+&lt;td&gt;满足的，偏心理满足&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;delighted&lt;/td&gt;
+&lt;td&gt;高兴的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;pleased&lt;/td&gt;
+&lt;td&gt;愉快的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Ugly&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;丑陋的 / 不愉快&lt;/td&gt;
+&lt;td&gt;horrible&lt;/td&gt;
+&lt;td&gt;可怕的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;unpleasant&lt;/td&gt;
+&lt;td&gt;令人不快的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="二人物品质-traits"&gt;二、人物品质 Traits
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;原词&lt;/th&gt;
+&lt;th&gt;词性&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;th&gt;替换词&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Brave&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;勇敢的&lt;/td&gt;
+&lt;td&gt;courageous&lt;/td&gt;
+&lt;td&gt;有勇气的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;fearless&lt;/td&gt;
+&lt;td&gt;无畏的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;valiant&lt;/td&gt;
+&lt;td&gt;英勇的，文学化&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Lazy&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;懒惰的&lt;/td&gt;
+&lt;td&gt;sluggish&lt;/td&gt;
+&lt;td&gt;行动迟缓&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;inactive&lt;/td&gt;
+&lt;td&gt;不活跃的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Neat&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;整洁的&lt;/td&gt;
+&lt;td&gt;shapely&lt;/td&gt;
+&lt;td&gt;匀称的（特指身材）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;tidy&lt;/td&gt;
+&lt;td&gt;整齐的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Moody&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;情绪多变的&lt;/td&gt;
+&lt;td&gt;changeable&lt;/td&gt;
+&lt;td&gt;易变的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;irritable&lt;/td&gt;
+&lt;td&gt;易怒的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="三事物描述-attributes"&gt;三、事物描述 Attributes
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;原词&lt;/th&gt;
+&lt;th&gt;词性&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;th&gt;替换词&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Amazing&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;惊人的&lt;/td&gt;
+&lt;td&gt;incredible&lt;/td&gt;
+&lt;td&gt;难以置信的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;impressive&lt;/td&gt;
+&lt;td&gt;令人印象深刻的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Beautiful&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;美丽的&lt;/td&gt;
+&lt;td&gt;gorgeous&lt;/td&gt;
+&lt;td&gt;极美的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;attractive&lt;/td&gt;
+&lt;td&gt;有吸引力的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;magnificent&lt;/td&gt;
+&lt;td&gt;宏伟壮丽的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Big&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;大的&lt;/td&gt;
+&lt;td&gt;huge&lt;/td&gt;
+&lt;td&gt;巨大的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;immense&lt;/td&gt;
+&lt;td&gt;非常大的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;enormous&lt;/td&gt;
+&lt;td&gt;相当大&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Bad&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;坏的&lt;/td&gt;
+&lt;td&gt;harmful&lt;/td&gt;
+&lt;td&gt;有害的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;injurious&lt;/td&gt;
+&lt;td&gt;有伤害的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;unpleasant&lt;/td&gt;
+&lt;td&gt;令人不快的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;horrible&lt;/td&gt;
+&lt;td&gt;可怕的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Delicious&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;美味的&lt;/td&gt;
+&lt;td&gt;tasty&lt;/td&gt;
+&lt;td&gt;美味的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;toothsome&lt;/td&gt;
+&lt;td&gt;美味的 / 文学化&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Definite&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;明确的&lt;/td&gt;
+&lt;td&gt;certain&lt;/td&gt;
+&lt;td&gt;确定的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;positive&lt;/td&gt;
+&lt;td&gt;肯定的 / 也有“积极”义&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Famous&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;有名的&lt;/td&gt;
+&lt;td&gt;distinguished&lt;/td&gt;
+&lt;td&gt;杰出的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;well-known&lt;/td&gt;
+&lt;td&gt;众所周知的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Fat&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;胖的&lt;/td&gt;
+&lt;td&gt;stout&lt;/td&gt;
+&lt;td&gt;矮而结实&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;chubby&lt;/td&gt;
+&lt;td&gt;可爱圆润&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;plump&lt;/td&gt;
+&lt;td&gt;丰满的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Funny&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;有趣的&lt;/td&gt;
+&lt;td&gt;silly&lt;/td&gt;
+&lt;td&gt;愚蠢可笑&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;amusing&lt;/td&gt;
+&lt;td&gt;好笑的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;humorous&lt;/td&gt;
+&lt;td&gt;幽默的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Good&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;好的&lt;/td&gt;
+&lt;td&gt;honorable&lt;/td&gt;
+&lt;td&gt;高尚的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;excellent&lt;/td&gt;
+&lt;td&gt;优秀的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Great&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;伟大的&lt;/td&gt;
+&lt;td&gt;distinguished&lt;/td&gt;
+&lt;td&gt;杰出的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;remarkable&lt;/td&gt;
+&lt;td&gt;显著的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Important&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;重要的&lt;/td&gt;
+&lt;td&gt;valuable&lt;/td&gt;
+&lt;td&gt;有价值的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;essential&lt;/td&gt;
+&lt;td&gt;必要的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;significant&lt;/td&gt;
+&lt;td&gt;重要的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Interesting&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;有趣的&lt;/td&gt;
+&lt;td&gt;absorbing&lt;/td&gt;
+&lt;td&gt;引人入胜的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;fascinating&lt;/td&gt;
+&lt;td&gt;迷人的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;engaging&lt;/td&gt;
+&lt;td&gt;吸引人的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Old&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;老的&lt;/td&gt;
+&lt;td&gt;ancient&lt;/td&gt;
+&lt;td&gt;古代的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;aged&lt;/td&gt;
+&lt;td&gt;年老的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;primitive&lt;/td&gt;
+&lt;td&gt;原始的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Slow&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;慢的&lt;/td&gt;
+&lt;td&gt;unhurried&lt;/td&gt;
+&lt;td&gt;不慌不忙的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;gradual&lt;/td&gt;
+&lt;td&gt;逐渐的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Strange&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;奇怪的&lt;/td&gt;
+&lt;td&gt;weird&lt;/td&gt;
+&lt;td&gt;怪异的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;unusual&lt;/td&gt;
+&lt;td&gt;不寻常的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="四基础动作类-basic-actions"&gt;四、基础动作类 Basic Actions
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;原词&lt;/th&gt;
+&lt;th&gt;词性&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;th&gt;替换词&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Do&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;做&lt;/td&gt;
+&lt;td&gt;accomplish&lt;/td&gt;
+&lt;td&gt;成功完成&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;achieve&lt;/td&gt;
+&lt;td&gt;实现&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Make&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;制作&lt;/td&gt;
+&lt;td&gt;fabricate&lt;/td&gt;
+&lt;td&gt;制作/编造（含捏造义）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;construct&lt;/td&gt;
+&lt;td&gt;建造&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;accomplish&lt;/td&gt;
+&lt;td&gt;完成&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Break&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;打破&lt;/td&gt;
+&lt;td&gt;demolish&lt;/td&gt;
+&lt;td&gt;彻底摧毁建筑物&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;ruin&lt;/td&gt;
+&lt;td&gt;破坏&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Cut&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;削减&lt;/td&gt;
+&lt;td&gt;reduce&lt;/td&gt;
+&lt;td&gt;减少&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;decrease&lt;/td&gt;
+&lt;td&gt;降低&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;alleviate&lt;/td&gt;
+&lt;td&gt;减轻&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;End&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;结束&lt;/td&gt;
+&lt;td&gt;terminate&lt;/td&gt;
+&lt;td&gt;终止（正式用语）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;conclude&lt;/td&gt;
+&lt;td&gt;结束&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Go&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;去&lt;/td&gt;
+&lt;td&gt;proceed&lt;/td&gt;
+&lt;td&gt;继续前进（正式用语）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;depart&lt;/td&gt;
+&lt;td&gt;离开&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Take&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;拿，取得&lt;/td&gt;
+&lt;td&gt;acquire&lt;/td&gt;
+&lt;td&gt;获得&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;consume&lt;/td&gt;
+&lt;td&gt;消耗&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Get&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;得到&lt;/td&gt;
+&lt;td&gt;acquire&lt;/td&gt;
+&lt;td&gt;获得&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;obtain&lt;/td&gt;
+&lt;td&gt;获得&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;gain&lt;/td&gt;
+&lt;td&gt;获得&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Use&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;使用&lt;/td&gt;
+&lt;td&gt;employ&lt;/td&gt;
+&lt;td&gt;使用（正式）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;utilize&lt;/td&gt;
+&lt;td&gt;利用（正式）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;consume&lt;/td&gt;
+&lt;td&gt;消耗&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;spend&lt;/td&gt;
+&lt;td&gt;花费&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;exhaust&lt;/td&gt;
+&lt;td&gt;用尽&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;expend&lt;/td&gt;
+&lt;td&gt;花费&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Stop&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;停止&lt;/td&gt;
+&lt;td&gt;conclude&lt;/td&gt;
+&lt;td&gt;结束&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;cease&lt;/td&gt;
+&lt;td&gt;停止&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="五程度变化影响类-change--impact"&gt;五、程度/变化/影响类 Change &amp;amp; Impact
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;原词&lt;/th&gt;
+&lt;th&gt;词性&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;th&gt;替换词&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Increase / Decrease&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;增加/减少&lt;/td&gt;
+&lt;td&gt;reduce&lt;/td&gt;
+&lt;td&gt;减少&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;decrease&lt;/td&gt;
+&lt;td&gt;降低&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;diminish&lt;/td&gt;
+&lt;td&gt;减小，渐减&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Kill&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;杀死&lt;/td&gt;
+&lt;td&gt;murder&lt;/td&gt;
+&lt;td&gt;谋杀&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;execute&lt;/td&gt;
+&lt;td&gt;处决&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Hurt&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;伤害&lt;/td&gt;
+&lt;td&gt;injure&lt;/td&gt;
+&lt;td&gt;伤害，偏正式/医学&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;wound&lt;/td&gt;
+&lt;td&gt;伤害（身体）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;damage&lt;/td&gt;
+&lt;td&gt;破坏&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;harm&lt;/td&gt;
+&lt;td&gt;伤害&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="六思维与判断-thinking"&gt;六、思维与判断 Thinking
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;原词&lt;/th&gt;
+&lt;th&gt;词性&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;th&gt;替换词&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Difference&lt;/td&gt;
+&lt;td&gt;n.&lt;/td&gt;
+&lt;td&gt;区别&lt;/td&gt;
+&lt;td&gt;contrast&lt;/td&gt;
+&lt;td&gt;对比&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;distinction&lt;/td&gt;
+&lt;td&gt;差别&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Idea&lt;/td&gt;
+&lt;td&gt;n.&lt;/td&gt;
+&lt;td&gt;想法&lt;/td&gt;
+&lt;td&gt;conception&lt;/td&gt;
+&lt;td&gt;概念/构想&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;concept&lt;/td&gt;
+&lt;td&gt;概念&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;opinion&lt;/td&gt;
+&lt;td&gt;想法&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="七交流表达-communication"&gt;七、交流表达 Communication
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;原词&lt;/th&gt;
+&lt;th&gt;词性&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;th&gt;替换词&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Answer&lt;/td&gt;
+&lt;td&gt;v./n.&lt;/td&gt;
+&lt;td&gt;回答&lt;/td&gt;
+&lt;td&gt;respond&lt;/td&gt;
+&lt;td&gt;回应&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;reply&lt;/td&gt;
+&lt;td&gt;回复&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Ask&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;问&lt;/td&gt;
+&lt;td&gt;inquire&lt;/td&gt;
+&lt;td&gt;询问（正式）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;question&lt;/td&gt;
+&lt;td&gt;提问&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;request&lt;/td&gt;
+&lt;td&gt;请求&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Explain&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;解释&lt;/td&gt;
+&lt;td&gt;interpret&lt;/td&gt;
+&lt;td&gt;解释含义&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;clarify&lt;/td&gt;
+&lt;td&gt;澄清&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;define&lt;/td&gt;
+&lt;td&gt;下定义&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Look (at)&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;看&lt;/td&gt;
+&lt;td&gt;witness&lt;/td&gt;
+&lt;td&gt;目击&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;observe&lt;/td&gt;
+&lt;td&gt;观察&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;glance&lt;/td&gt;
+&lt;td&gt;瞥一眼&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Say / Tell&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;说&lt;/td&gt;
+&lt;td&gt;convey&lt;/td&gt;
+&lt;td&gt;传达（正式）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;express&lt;/td&gt;
+&lt;td&gt;表达&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;declare&lt;/td&gt;
+&lt;td&gt;宣告&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Plan&lt;/td&gt;
+&lt;td&gt;n./v.&lt;/td&gt;
+&lt;td&gt;计划&lt;/td&gt;
+&lt;td&gt;scheme&lt;/td&gt;
+&lt;td&gt;计划/阴谋&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;design&lt;/td&gt;
+&lt;td&gt;设计&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;intend&lt;/td&gt;
+&lt;td&gt;打算&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Put&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;放置&lt;/td&gt;
+&lt;td&gt;establish&lt;/td&gt;
+&lt;td&gt;建立&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;place&lt;/td&gt;
+&lt;td&gt;放置&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;set&lt;/td&gt;
+&lt;td&gt;安置&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="八抽象概念-functional"&gt;八、抽象概念 Functional
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;原词&lt;/th&gt;
+&lt;th&gt;词性&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;th&gt;替换词&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Wrong&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;错误的&lt;/td&gt;
+&lt;td&gt;incorrect&lt;/td&gt;
+&lt;td&gt;不正确&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;inaccurate&lt;/td&gt;
+&lt;td&gt;不准确&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;mistaken&lt;/td&gt;
+&lt;td&gt;弄错的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;improper&lt;/td&gt;
+&lt;td&gt;不合适&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;unsuitable&lt;/td&gt;
+&lt;td&gt;不适用&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Fair&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;公平的&lt;/td&gt;
+&lt;td&gt;objective&lt;/td&gt;
+&lt;td&gt;客观&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;impartial&lt;/td&gt;
+&lt;td&gt;公正&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;just&lt;/td&gt;
+&lt;td&gt;正义的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;adj.&lt;/td&gt;
+&lt;td&gt;错误的 / 虚假的&lt;/td&gt;
+&lt;td&gt;fraudulent&lt;/td&gt;
+&lt;td&gt;欺诈的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;untrue&lt;/td&gt;
+&lt;td&gt;不真实的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;incorrect&lt;/td&gt;
+&lt;td&gt;错误的&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Have&lt;/td&gt;
+&lt;td&gt;v.&lt;/td&gt;
+&lt;td&gt;拥有&lt;/td&gt;
+&lt;td&gt;contain&lt;/td&gt;
+&lt;td&gt;包含&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;possess&lt;/td&gt;
+&lt;td&gt;拥有&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;include&lt;/td&gt;
+&lt;td&gt;包括&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Predicament&lt;/td&gt;
+&lt;td&gt;n.&lt;/td&gt;
+&lt;td&gt;困境&lt;/td&gt;
+&lt;td&gt;plight&lt;/td&gt;
+&lt;td&gt;困境&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;difficulty&lt;/td&gt;
+&lt;td&gt;困难&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</description></item><item><title>Redis 面试题高频总结（问答实录）</title><link>https://personalblog.xiaoxin520.com/p/redis-interview-qa/</link><pubDate>Wed, 29 Oct 2025 00:00:00 +0000</pubDate><guid>https://personalblog.xiaoxin520.com/p/redis-interview-qa/</guid><description>&lt;img src="https://personalblog.xiaoxin520.com/p/redis-interview-qa/redis-qa-cover.jpg" alt="Featured image of post Redis 面试题高频总结（问答实录）" /&gt;&lt;h4 id="1-什么是缓存穿透怎么解决"&gt;1. 什么是缓存穿透？怎么解决？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：缓存穿透指查询一定不存在的数据，由于数据库查不到，也不会写入缓存，导致每次请求都打到 DB。&lt;br&gt;
+&lt;strong&gt;解决方案&lt;/strong&gt;：使用 &lt;strong&gt;布隆过滤器&lt;/strong&gt; 拦截无效请求。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="2-你能介绍一下布隆过滤器吗"&gt;2. 你能介绍一下布隆过滤器吗？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：布隆过滤器用来判断元素是否在集合中。底层是一个 bit 数组，通过多次 hash 把 key 映射到不同位置并置为 1。&lt;br&gt;
+查找时只要有一位是 0，就说明不存在。虽然有少量误判（一般小于 5%），但能极大节省空间。我们项目用的是 &lt;strong&gt;Redisson 的布隆过滤器实现&lt;/strong&gt;。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="3-什么是缓存击穿怎么解决"&gt;3. 什么是缓存击穿？怎么解决？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：缓存击穿是指某个热点 key 过期瞬间，大量并发请求同时访问，导致都去查 DB。&lt;br&gt;
+&lt;strong&gt;解决办法&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;使用 &lt;strong&gt;互斥锁（SETNX）&lt;/strong&gt; 控制只有一个线程加载数据；&lt;/li&gt;
+&lt;li&gt;使用 &lt;strong&gt;逻辑过期&lt;/strong&gt;：缓存中保存过期时间字段，过期后由后台线程异步更新。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h4 id="4-什么是缓存雪崩怎么解决"&gt;4. 什么是缓存雪崩？怎么解决？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：雪崩是大量 key 同时过期，所有请求都访问 DB，造成压力暴增。&lt;br&gt;
+&lt;strong&gt;解决办法&lt;/strong&gt;：给缓存时间加上随机值，让 key 的过期时间分散。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="5-redis-和-mysql-如何保持一致性"&gt;5. Redis 和 MySQL 如何保持一致性？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：两种方案：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;强一致性&lt;/strong&gt;：用 &lt;strong&gt;Redisson 读写锁&lt;/strong&gt;，读写互斥；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;最终一致性&lt;/strong&gt;：用 &lt;strong&gt;Canal 监听 MySQL binlog&lt;/strong&gt;，实时更新 Redis。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="6-redis-的持久化方式有哪些"&gt;6. Redis 的持久化方式有哪些？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：有两种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;RDB&lt;/strong&gt;（快照）：定期将内存数据写入磁盘，恢复快但可能丢数据；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;AOF&lt;/strong&gt;（追加日志）：记录写命令，恢复完整但速度稍慢。&lt;br&gt;
+实际项目中多采用 &lt;strong&gt;RDB + AOF 混合持久化&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="7-redis-的过期删除策略"&gt;7. Redis 的过期删除策略？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：两种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;惰性删除&lt;/strong&gt;：访问时检查是否过期；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;定期删除&lt;/strong&gt;：后台定时扫描部分 key 删除。&lt;br&gt;
+Redis 实际上是两者结合使用。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="8-redis-的内存淘汰策略"&gt;8. Redis 的内存淘汰策略？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：常见的有：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;noeviction&lt;/code&gt;：内存满时报错；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;allkeys-lru&lt;/code&gt;：淘汰最近最少使用的数据；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;allkeys-lfu&lt;/code&gt;：淘汰访问频率最低的。&lt;br&gt;
+我们一般设置 &lt;code&gt;allkeys-lru&lt;/code&gt; 保证热点数据留存。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="9-redis-分布式锁如何实现"&gt;9. Redis 分布式锁如何实现？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：通过 &lt;code&gt;SETNX&lt;/code&gt; 实现互斥；也可以用 &lt;strong&gt;Redisson&lt;/strong&gt;，支持自动续期（看门狗机制）、可设置超时、可重入，性能更好。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="10-redisson-分布式锁能保证主从一致吗"&gt;10. Redisson 分布式锁能保证主从一致吗？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：不能。主节点宕机后，锁状态可能不同步到从节点。&lt;br&gt;
+可使用 &lt;strong&gt;红锁（RedLock）&lt;/strong&gt; 同时在多个 Redis 节点加锁，要求大多数节点成功，但性能较差，一般不建议生产使用。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="11-业务需要强一致性该怎么办"&gt;11. 业务需要强一致性该怎么办？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：如果业务对一致性要求极高，可以使用 &lt;strong&gt;ZooKeeper 分布式锁&lt;/strong&gt;，它能提供强一致保证。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="12-redis-集群有哪些模式"&gt;12. Redis 集群有哪些模式？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：主要有三种：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;主从复制&lt;/strong&gt;（读写分离）；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;哨兵模式&lt;/strong&gt;（自动故障转移）；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;分片集群&lt;/strong&gt;（海量数据分布式存储）。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h4 id="13-主从同步的流程"&gt;13. 主从同步的流程？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：分两步：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;全量同步&lt;/strong&gt;：slave 第一次连接时，master 生成 RDB 并传输；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;增量同步&lt;/strong&gt;：slave 重连后，通过 offset 获取主节点的增量命令日志。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="14-redis-脑裂怎么解决"&gt;14. Redis 脑裂怎么解决？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：脑裂是主从间网络分区，出现两个 master。&lt;br&gt;
+可通过配置：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;设置最少从节点数；&lt;/li&gt;
+&lt;li&gt;限制主从复制延迟阈值，防止数据丢失。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h4 id="15-分片集群数据如何存储"&gt;15. 分片集群数据如何存储？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：Redis 集群引入了 &lt;strong&gt;16384 个哈希槽&lt;/strong&gt;，key 通过 &lt;code&gt;CRC16(key) % 16384&lt;/code&gt; 定位到对应节点，实现负载均衡与高并发。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h4 id="16-redis-为什么这么快"&gt;16. Redis 为什么这么快？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：主要因为：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;完全基于内存；&lt;/li&gt;
+&lt;li&gt;单线程避免锁竞争；&lt;/li&gt;
+&lt;li&gt;使用 &lt;strong&gt;I/O 多路复用（epoll）&lt;/strong&gt;；&lt;/li&gt;
+&lt;li&gt;核心命令执行流程极短。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h4 id="17-什么是-io-多路复用"&gt;17. 什么是 I/O 多路复用？
+&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;答&lt;/strong&gt;：一个线程同时监听多个 socket，当某个 socket 可读/写时统一处理，不用轮询。&lt;br&gt;
+Redis 使用 &lt;strong&gt;epoll + 事件驱动模型&lt;/strong&gt;，高效处理成千上万的连接。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id="总结"&gt;总结
+&lt;/h3&gt;&lt;p&gt;Redis 面试的核心在于三点：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;缓存问题三兄弟&lt;/strong&gt;：穿透、击穿、雪崩；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;一致性与持久化&lt;/strong&gt;：RDB、AOF、锁机制；&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;高可用与高性能&lt;/strong&gt;：主从、哨兵、分片、I/O 模型。&lt;/li&gt;
+&lt;/ol&gt;</description></item><item><title>优质资源推荐合集(持续更新)</title><link>https://personalblog.xiaoxin520.com/p/%E4%BC%98%E8%B4%A8%E8%B5%84%E6%BA%90%E6%8E%A8%E8%8D%90%E5%90%88%E9%9B%86%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/</link><pubDate>Sun, 12 Oct 2025 00:00:00 +0800</pubDate><guid>https://personalblog.xiaoxin520.com/p/%E4%BC%98%E8%B4%A8%E8%B5%84%E6%BA%90%E6%8E%A8%E8%8D%90%E5%90%88%E9%9B%86%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0/</guid><description>&lt;p&gt;在日常学习与工作中，总会遇到各种需要：文档转换、图片识别、AI 工具、资源下载、以及在线学习平台。&lt;br&gt;
+以下整理了一批高质量的实用网站，按照类别与访问方式进行说明。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="-实用工具类"&gt;🧰 实用工具类
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;名称&lt;/th&gt;
+&lt;th&gt;简介&lt;/th&gt;
+&lt;th&gt;访问状态&lt;/th&gt;
+&lt;th&gt;链接&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;I❤PDF&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;在线进行 PDF 合并、拆分、格式转换等操作&lt;/td&gt;
+&lt;td&gt;直连&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://www.ilovepdf.com/" target="_blank" rel="noopener"
+&gt;https://www.ilovepdf.com/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Gammas&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;在线 AI PPT 制作平台&lt;/td&gt;
+&lt;td&gt;需要魔法&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://gamma.app/" target="_blank" rel="noopener"
+&gt;https://gamma.app/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Amymind&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;在线 AI 思维导图生成工具&lt;/td&gt;
+&lt;td&gt;需要魔法&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://amymind.com/" target="_blank" rel="noopener"
+&gt;https://amymind.com/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;PearOCR&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;在线图片文字识别提取&lt;/td&gt;
+&lt;td&gt;直连&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://pearocr.com/#/" target="_blank" rel="noopener"
+&gt;https://pearocr.com/#/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Whimsical&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;在线 AI 流程图生成&lt;/td&gt;
+&lt;td&gt;需要魔法&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://whimsical.com/ai/ai-text-to-flowchart" target="_blank" rel="noopener"
+&gt;https://whimsical.com/ai/ai-text-to-flowchart&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="-游戏与娱乐资源"&gt;🎮 游戏与娱乐资源
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;名称&lt;/th&gt;
+&lt;th&gt;简介&lt;/th&gt;
+&lt;th&gt;访问状态&lt;/th&gt;
+&lt;th&gt;链接&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;MTool&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;傻瓜式一键汉化软件，适用于多款游戏&lt;/td&gt;
+&lt;td&gt;直连&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://mtool.app/?lang=chs" target="_blank" rel="noopener"
+&gt;https://mtool.app/?lang=chs&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="-影视资源网站"&gt;🎬 影视资源网站
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;名称&lt;/th&gt;
+&lt;th&gt;简介&lt;/th&gt;
+&lt;th&gt;访问状态&lt;/th&gt;
+&lt;th&gt;链接&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;磁力天堂&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;超多影视磁力资源网站&lt;/td&gt;
+&lt;td&gt;直连&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://www.clgod.xyz/" target="_blank" rel="noopener"
+&gt;https://www.clgod.xyz/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;RARBG&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;全网电影、电视剧磁力下载资源&lt;/td&gt;
+&lt;td&gt;需要魔法&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://rargb.to/" target="_blank" rel="noopener"
+&gt;https://rargb.to/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;海盗湾（The Pirate Bay）&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;全球最大的 BT 种子网站之一&lt;/td&gt;
+&lt;td&gt;需要魔法&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://thepiratebay.org/" target="_blank" rel="noopener"
+&gt;https://thepiratebay.org/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="-学习与知识资源"&gt;📚 学习与知识资源
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;名称&lt;/th&gt;
+&lt;th&gt;简介&lt;/th&gt;
+&lt;th&gt;访问状态&lt;/th&gt;
+&lt;th&gt;链接&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;数据小助手&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;在线物理实验、公式计算器等学习工具&lt;/td&gt;
+&lt;td&gt;直连&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://testzs.cn/" target="_blank" rel="noopener"
+&gt;https://testzs.cn/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;LibGen（Library Genesis）&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;全球最大的电子书与学术论文下载站&lt;/td&gt;
+&lt;td&gt;需要魔法&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://libgen.ac/" target="_blank" rel="noopener"
+&gt;https://libgen.ac/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Project Gutenberg&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;英文经典书籍电子图书馆&lt;/td&gt;
+&lt;td&gt;需要魔法&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://www.gutenberg.org/" target="_blank" rel="noopener"
+&gt;https://www.gutenberg.org/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Internet Archive&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;全球最大互联网档案馆，保存网页、视频、书籍等&lt;/td&gt;
+&lt;td&gt;需要魔法&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://archive.org/" target="_blank" rel="noopener"
+&gt;https://archive.org/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Pixiv&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;日本插画、漫画、同人艺术社区&lt;/td&gt;
+&lt;td&gt;需要魔法&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://www.pixiv.net/" target="_blank" rel="noopener"
+&gt;https://www.pixiv.net/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Unsplash&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;高清无版权图片素材站&lt;/td&gt;
+&lt;td&gt;需要魔法&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://unsplash.com/" target="_blank" rel="noopener"
+&gt;https://unsplash.com/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;OpenAI Playground&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;OpenAI 提供的 AI 模型在线体验与 API 测试平台&lt;/td&gt;
+&lt;td&gt;需要魔法&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://platform.openai.com/playground" target="_blank" rel="noopener"
+&gt;https://platform.openai.com/playground&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Coursera&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;全球知名在线课程平台，涵盖计算机、经济、心理等方向&lt;/td&gt;
+&lt;td&gt;需要魔法&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://www.coursera.org/" target="_blank" rel="noopener"
+&gt;https://www.coursera.org/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Khan Academy&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;免费学习平台，涵盖数学、科学、编程等内容&lt;/td&gt;
+&lt;td&gt;需要魔法&lt;/td&gt;
+&lt;td&gt;&lt;a class="link" href="https://www.khanacademy.org/" target="_blank" rel="noopener"
+&gt;https://www.khanacademy.org/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="-分类速览"&gt;🌐 分类速览
+&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;分类&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;实用工具&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;提高效率的在线服务与工具网站&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;游戏资源&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;游戏相关工具、汉化与资源下载&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;学习资源&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;免费与付费的知识平台、电子图书馆&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;影视资源&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;高质量影视、磁力与BT下载网站&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;访问方式说明&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;🟢 直连：可直接访问&lt;br&gt;🔴 需要魔法：需科学上网环境&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id="-小结"&gt;💡 小结
+&lt;/h2&gt;&lt;p&gt;这些资源覆盖了从办公、学习到娱乐的各个方面。&lt;br&gt;
+建议：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;收藏常用工具如「I❤PDF」与「PearOCR」；&lt;/li&gt;
+&lt;li&gt;学术类可关注「LibGen」与「Internet Archive」；&lt;/li&gt;
+&lt;li&gt;想学习编程或外语的同学，可试试「Coursera」与「Khan Academy」。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果你有其他优秀网站，也欢迎在评论区或邮件中分享～ 🌱&lt;/p&gt;</description></item><item><title>idea构建项目时无法识别方法或变量</title><link>https://personalblog.xiaoxin520.com/p/idea%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E6%97%B6%E6%97%A0%E6%B3%95%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E6%88%96%E5%8F%98%E9%87%8F/</link><pubDate>Tue, 23 Sep 2025 00:00:00 +0800</pubDate><guid>https://personalblog.xiaoxin520.com/p/idea%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E6%97%B6%E6%97%A0%E6%B3%95%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E6%88%96%E5%8F%98%E9%87%8F/</guid><description>&lt;img src="https://personalblog.xiaoxin520.com/p/idea%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E6%97%B6%E6%97%A0%E6%B3%95%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E6%88%96%E5%8F%98%E9%87%8F/cover.jpg" alt="Featured image of post idea构建项目时无法识别方法或变量" /&gt;&lt;p&gt;这种情况很让人莫名其妙，博主在排查了很久之后排除了代码自身问题所在，通过之后的资料查询找到了以下的方法：&lt;/p&gt;
+&lt;h2 id="现象"&gt;现象
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;IDEA 编译无报错，但运行时报错：&lt;code&gt;cannot find symbol / 找不到符号&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;清理、重建项目后依旧复现&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="根因猜测"&gt;根因猜测
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;多数情况下与 IDEA 自身构建/运行时对 Maven 的处理不一致有关（构建使用 Maven，运行使用 IDEA 内置编译缓存）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="解决步骤"&gt;解决步骤
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;先对要启动的模块执行一次安装（确保依赖产物可用）：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mvn clean install -DskipTests
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;或者直接使用右侧栏的Maven小插件执行安装。&lt;/p&gt;
+&lt;ol start="2"&gt;
+&lt;li&gt;
+&lt;p&gt;打开 IDEA 设置：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;路径：设置 -&amp;gt; 构建 -&amp;gt; Maven&lt;/li&gt;
+&lt;li&gt;勾选「正在运行程序」（意为运行时也使用 Maven 方式，避免与 IDE 内置编译产生不一致）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;重新运行项目进行验证。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://personalblog.xiaoxin520.com/p/idea%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E6%97%B6%E6%97%A0%E6%B3%95%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E6%88%96%E5%8F%98%E9%87%8F/show.jpg"
+width="1388"
+height="717"
+srcset="https://personalblog.xiaoxin520.com/p/idea%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E6%97%B6%E6%97%A0%E6%B3%95%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E6%88%96%E5%8F%98%E9%87%8F/show_hu_9289346e8c6034c3.jpg 480w, https://personalblog.xiaoxin520.com/p/idea%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E6%97%B6%E6%97%A0%E6%B3%95%E8%AF%86%E5%88%AB%E6%96%B9%E6%B3%95%E6%88%96%E5%8F%98%E9%87%8F/show_hu_52a0d0c74073429f.jpg 1024w"
+loading="lazy"
+alt="IDEA Maven 运行设置示意图"
+class="gallery-image"
+data-flex-grow="193"
+data-flex-basis="464px"
+&gt;&lt;/p&gt;
+&lt;h2 id="补充建议"&gt;补充建议
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;若仍有问题，可尝试：
+&lt;ul&gt;
+&lt;li&gt;File -&amp;gt; Invalidate Caches… -&amp;gt; Invalidate and Restart&lt;/li&gt;
+&lt;li&gt;删除 &lt;code&gt;~/.m2/repository&lt;/code&gt; 中可疑缓存后重试 &lt;code&gt;mvn clean install&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;确认 JDK 版本与项目的 &lt;code&gt;maven-compiler-plugin&lt;/code&gt; 配置一致&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;尽量统一「构建」与「运行」方式（都走 Maven 或都走 Gradle/IDEA 内置）以减少环境差异。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;很神奇地，这样就跑通了，可以作为参考。&lt;/p&gt;</description></item><item><title>git国内使用魔法无法推送</title><link>https://personalblog.xiaoxin520.com/p/git%E5%9B%BD%E5%86%85%E4%BD%BF%E7%94%A8%E9%AD%94%E6%B3%95%E6%97%A0%E6%B3%95%E6%8E%A8%E9%80%81/</link><pubDate>Mon, 15 Sep 2025 00:00:00 +0800</pubDate><guid>https://personalblog.xiaoxin520.com/p/git%E5%9B%BD%E5%86%85%E4%BD%BF%E7%94%A8%E9%AD%94%E6%B3%95%E6%97%A0%E6%B3%95%E6%8E%A8%E9%80%81/</guid><description>&lt;h2 id="问题描述"&gt;问题描述
+&lt;/h2&gt;&lt;p&gt;当我们使用魔法软件在Git进行代码推送时，经常会遇到以下类似错误：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;fatal: unable to access &lt;span class="s1"&gt;&amp;#39;https://github.com/...&amp;#39;&lt;/span&gt;: failed to connect to 127.0.0.1
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;port &lt;span class="m"&gt;7890&lt;/span&gt; after &lt;span class="m"&gt;2092&lt;/span&gt; ms: couldn&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;t connect to server
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;⚠️ 注意：&lt;/strong&gt; 这个问题通常是由于代理端口配置不正确导致的。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id="解决方案"&gt;解决方案
+&lt;/h2&gt;&lt;h3 id="在开始之前请确保您的代理服务正常运行且网络流畅"&gt;在开始之前，请确保您的代理服务正常运行，且网络流畅
+&lt;/h3&gt;&lt;h3 id="步骤一查看代理服务器端口"&gt;步骤一：查看代理服务器端口
+&lt;/h3&gt;&lt;p&gt;在您的电脑中依次打开：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;设置 → 网络和Internet → 代理 → 手动设置代理 → 编辑&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;查看代理服务器地址右侧的端口号，先记下来&lt;/p&gt;
+&lt;h3 id="步骤二打开cmd终端"&gt;步骤二：打开cmd终端
+&lt;/h3&gt;&lt;p&gt;依次输入以下命令：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global http.proxy http://127.0.0.1:&lt;span class="o"&gt;(&lt;/span&gt;端口号&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global https.proxy http://127.0.0.1:&lt;span class="o"&gt;(&lt;/span&gt;端口号&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="步骤三检验配置是否完成"&gt;步骤三：检验配置是否完成
+&lt;/h3&gt;&lt;p&gt;继续在终端输入以下代码：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global -l
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;✅ 成功提示：&lt;/strong&gt; 如果看到输出了账户信息，说明配置完成。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id="常见问题"&gt;常见问题
+&lt;/h2&gt;&lt;h3 id="如何取消代理配置"&gt;如何取消代理配置？
+&lt;/h3&gt;&lt;p&gt;如果以后不需要使用代理，可以通过以下命令取消：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global --unset http.proxy
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git config --global --unset https.proxy
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="端口号常见值"&gt;端口号常见值
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;7890&lt;/strong&gt; - Clash for Windows 默认端口&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;1080&lt;/strong&gt; - 一些代理软件的默认端口&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;8080&lt;/strong&gt; - 部分代理工具使用的端口&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="验证代理是否生效"&gt;验证代理是否生效
+&lt;/h3&gt;&lt;p&gt;可以通过以下命令测试：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git ls-remote https://github.com/octocat/Hello-World.git
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果能够正常获取远程仓库信息，说明代理配置成功。&lt;/p&gt;
+&lt;h2 id="总结"&gt;总结
+&lt;/h2&gt;&lt;p&gt;通过正确配置Git的代理设置，可以解决在使用魔法软件时无法推送代码的问题。关键是要确保：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;代理软件正常运行&lt;/li&gt;
+&lt;li&gt;端口号配置正确&lt;/li&gt;
+&lt;li&gt;网络连接稳定&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;希望这篇文章能帮助您解决Git推送的问题！&lt;/p&gt;</description></item><item><title>你好 世界！</title><link>https://personalblog.xiaoxin520.com/p/hello-world/</link><pubDate>Sat, 13 Sep 2025 00:00:00 +0000</pubDate><guid>https://personalblog.xiaoxin520.com/p/hello-world/</guid><description>&lt;img src="https://personalblog.xiaoxin520.com/p/hello-world/cover.jpg" alt="Featured image of post 你好 世界！" /&gt;&lt;h3 id="初来乍到我的第一篇博客做个纪念"&gt;初来乍到，我的第一篇博客，做个纪念
+&lt;/h3&gt;&lt;p&gt;感觉要学的知识好多，希望月底能把Redis过完一遍&amp;hellip;&lt;/p&gt;
+&lt;p&gt;还有三四个要听的项目课，再跟两个月，看看最后能不能做出一个完整点的项目&lt;/p&gt;
+&lt;p&gt;还有六级月底再开始准备吧，背单词这种事就随缘了&lt;/p&gt;
+&lt;p&gt;java基础要过完一遍，每天没事看看八股&lt;/p&gt;
+&lt;p&gt;今天就先这样了吧&lt;/p&gt;</description></item></channel></rss>
